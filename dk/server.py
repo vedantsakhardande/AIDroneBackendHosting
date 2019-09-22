@@ -69,4 +69,4 @@ def index():
 		alt=None
 	return json.dumps({"latitude":lat,"longitude":lon,"alt":alt})
 
-app.run(debug=True)
+app.run(hostname='0.0.0.0',port=80,debug=True)
