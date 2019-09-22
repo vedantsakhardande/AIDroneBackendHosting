@@ -42,7 +42,7 @@ def connectMyCopter():
 
 
 	vehicle = connect(connection_string,wait_ready=True) #input as IP address and dont start script untill we have successfully connected
-
+	vehicle.wait_ready(True,raise_exception=False)
 	return vehicle
 
 def arm_and_takeoff(targetHeight):
