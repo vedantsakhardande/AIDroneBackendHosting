@@ -47,7 +47,7 @@ def connectMyCopter():
 
 def arm_and_takeoff(targetHeight):
 	while vehicle.is_armable!=True:
-		# print("Wait for vehicle to become armable")	
+		print("Wait for vehicle to become armable")	
 		time.sleep
 	print("Vehicle is now armable")
 
@@ -276,6 +276,7 @@ if __name__ == "__main__":
 		alt=vehicle.location.global_relative_frame.alt
 		#print(type(vehicle.velocity))
 			#print("Drone is executing mission, but we can still run code")
+		time.sleep(2)
 		f.close()
 		# dt = str(datetime.datetime.now())
 		# newname = 'file_'+dt+'.txt'
@@ -348,7 +349,7 @@ if __name__ == "__main__":
 		print("Time to Client is :",clienttime)
 		print("Time to Warehouse is :",warehousetime)
 		print("Vicinity status is :",vicinity)
-		time.sleep(1)
+		time.sleep(3)
 	
 	## Reset variables to sensible values.
 	print("\nReset vehicle attributes/parameters and exit")
@@ -368,4 +369,3 @@ if __name__ == "__main__":
 	    sitl.stop()
 
 	print("Completed")
-
