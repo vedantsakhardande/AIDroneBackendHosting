@@ -14,8 +14,8 @@ def execute(src_lat,src_lon,des_lat,des_lon):
     f.close()
     cmd="dronekit-sitl copter --home="+str(src_lat)+","+str(src_lon)+",0,180&"
     os.system(cmd)
-
+    time.sleep(2)
     os.system('screen -dm mavproxy.py --master=tcp:127.0.0.1:5760 --out=127.0.0.1:14550 --out=127.0.0.1:5762')
-
+    time.sleep(2)
     os.system('python mission_FRCRCE.py --connect 127.0.0.1:5762')
 # subprocess.call("launchSitl")
