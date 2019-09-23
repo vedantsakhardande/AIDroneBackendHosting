@@ -134,7 +134,6 @@ def printVehicleInformation(vehicle):
 def get_distance_metres(aLocation1, aLocation2):
     """
     Returns the ground distance in metres between two LocationGlobal objects.
-
     This method is an approximation, and will not be accurate over large distances and close to the 
     earth's poles. It comes from the ArduPilot test code: 
     https://github.com/diydrones/ardupilot/blob/master/Tools/autotest/common.py
