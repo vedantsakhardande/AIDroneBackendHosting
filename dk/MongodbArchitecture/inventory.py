@@ -7,7 +7,7 @@ import json
 from bson import json_util
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["sampleapp"]
-mycol = mydb["drones"]
+mycol = mydb["inventory"]
 class Drone(object):
     @staticmethod
     def insert_one(data):
