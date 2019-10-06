@@ -8,10 +8,10 @@ from bson import json_util
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["sampleapp"]
 mycol = mydb["inventory"]
-class Drone(object):
+class Inventory(object):
     @staticmethod
     def insert_one(data):
-	x = mycol.insert_one(mydict)
+	x = mycol.insert_one(data)
 	print(x.inserted_id)   
     @staticmethod
     def insert_many(data): 
@@ -19,13 +19,8 @@ class Drone(object):
 	print(x.inserted_ids)  
     @staticmethod 
     def find_one(query): #make it work for thus one
-
-        result=[]
-        for x in mycol.find_one({},query):
-            result.append({'_id' : x['_id'],'title' : x['title']})
-            print(x['_id']) # Object ID
-            # print(x)
-        return result
+	result=mycol.find_one(query)
+	return json_util.dumps(result)
     @staticmethod 
     def find_many(query): #make it work for thus one
         result=[]
@@ -64,18 +59,6 @@ class Drone(object):
 	x=mycol.delete_many(query)
 	print(x.deleted_count, " documents deleted.") 
 	return str(x.deleted_count)+" documents deleted"
-
-
-
-#make it work for thus one	
-    # @staticmethod
-    # def find_one(query):
-    #     return DB.find(collection='drones')
-    #Why two? sorry
-
-    @staticmethod
-    def deleteOne(query): # and this one
-        return DB.deleteOne(collection='inventory',query={'title':'Mavic Air'})
 
 
  
