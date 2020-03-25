@@ -3,7 +3,7 @@ import subprocess
 import time
 
 # from dronekit_sitl.__init__ import main
-def execute(src_lat,src_lon,des_lat,des_lon,portno):
+def execute(src_lat,src_lon,des_lat,des_lon,portno,processno):
     os.system('fuser -k 5760/tcp')
     os.system('fuser -k 5760/tcp')
     killport='fuser -k '+str(portno)+'/tcp'
