@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import send_file
 import qrcodegen
 import pymongo
+import re
 
 
 
@@ -31,9 +32,44 @@ app = Flask(__name__)
 def signup():
     data=request.json
     #id=data['id']
+    regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
     name=str(data['name'])
     email=str(data['email'])
     password=str(data['password'])
+    #Name Validation
+    if(len(name)>25):
+        return json.dumps(False)
+    #Email Validation
+    if(re.search(regex,email)==False):
+        return json.dumps(False)
+    #Password Validation
+    flag = 0
+    while True:   
+        if (len(password)<8): 
+            flag = -1
+            break
+        elif not re.search("[a-z]", password): 
+            flag = -1
+            break
+        elif not re.search("[A-Z]", password): 
+            flag = -1
+            break
+        elif not re.search("[0-9]", password): 
+            flag = -1
+            break
+        elif not re.search("[_@$]", password): 
+            flag = -1
+            break
+        elif re.search("\s", password): 
+            flag = -1
+            break
+        else: 
+            flag = 0
+            print("Valid Password") 
+        break
+  
+    if flag ==-1: 
+        return json.dumps(False)
     for x in col.find():
         print(x)
     print(col.find_one({"email": email}))
@@ -53,6 +89,40 @@ def validateUser():
     data=request.json
     email=str(data['email'])
     password=str(data['password'])
+    #Name Validation
+    if(len(name)>25):
+        return json.dumps(False)
+    #Email Validation
+    if(re.search(regex,email)==False):
+        return json.dumps(False)
+    #Password Validation
+    flag = 0
+    while True:   
+        if (len(password)<8): 
+            flag = -1
+            break
+        elif not re.search("[a-z]", password): 
+            flag = -1
+            break
+        elif not re.search("[A-Z]", password): 
+            flag = -1
+            break
+        elif not re.search("[0-9]", password): 
+            flag = -1
+            break
+        elif not re.search("[_@$]", password): 
+            flag = -1
+            break
+        elif re.search("\s", password): 
+            flag = -1
+            break
+        else: 
+            flag = 0
+            print("Valid Password") 
+        break
+  
+    if flag ==-1: 
+        return json.dumps(False)
     response = []
     documents=col.find()
     for document in documents:
