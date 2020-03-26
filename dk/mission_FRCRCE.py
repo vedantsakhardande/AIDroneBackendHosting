@@ -17,13 +17,6 @@ import math
 
 #function#
 
-
-
-def connectMyCopter():
-	
-	parser = argparse.ArgumentParser(description='commands') #make a parser object
-	parser.add_argument('--connect')  #new argument to specify an IP address after --connect
-
  
 
 def connectMyCopter():
@@ -175,8 +168,6 @@ def current_velocity():
 if __name__ == "__main__":
 	sitl = None
 	vehicle = connectMyCopter()
-
-	vehicle = connectMyCopter()
 # prints vehicles attributes
 	printVehicleInformation(vehicle)
 
@@ -296,14 +287,14 @@ if __name__ == "__main__":
 		print("Current Realtime velocity is %s"%current_velocity()) #North,East,Down
 	
 		# creation of MongoClient 
-		client=MongoClient()
+#		client=MongoClient()
 		# Connect with the portnumber and host | sudo service mongod start | mongo
 		client = MongoClient('mongodb://localhost:27017/') 
 		#client = MongoClient('mongodb+srv://drone:drone@cluster0-igbga.mongodb.net/test?retryWrites=true&w=majority') 
-		print('Connect to MongoDB Cluster')
+#		print('Connect to MongoDB Cluster')
 			# Access database 
 		mydatabase = client['aidrone'] 
-		print('Created Database')
+#		print('Created Database')
 		# Access collection of the database 
 		mycollection=mydatabase['waypoints']
 		vel = math.sqrt((vehicle.velocity[0]**2 + vehicle.velocity[1]**2 + vehicle.velocity[2]**2))
