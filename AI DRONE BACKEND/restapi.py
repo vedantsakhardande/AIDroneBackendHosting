@@ -1,11 +1,14 @@
 from pymongo import MongoClient
 from flask import Flask, jsonify, request 
 import json
+import bson
 from datetime import datetime
 from flask import send_file
 import qrcodegen
 import pymongo
 import re
+from flask_restplus import Api, Resource
+from flask_swagger import swagger
 
 
 
@@ -24,10 +27,14 @@ col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
 
 app = Flask(__name__) 
-  
-# on the terminal type: curl http://127.0.0.1:5000/ 
-# returns hello world when we use GET. 
-# returns the data that we send when we use POST. 
+# swaggerapp = Api(app = app)
+# name_space = swaggerapp.namespace('main', description='Main APIs')
+
+# @app.route("/spec")
+# def spec():
+#     return jsonify(swagger(app))
+
+
 @app.route('/signup', methods = ["POST"]) 
 def signup():
     data=request.json
@@ -73,10 +80,6 @@ def signup():
     for x in col.find():
         print(x)
     print(col.find_one({"email": email}))
-    # if(col.find_one({"email": email})):
-    #     print(col.find_one({"email": email}))
-    #     return "Already Registered"
-    # else:
     try:
         col.insert({ "name": name, "email":email, "password":password},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
@@ -89,46 +92,11 @@ def validateUser():
     data=request.json
     email=str(data['email'])
     password=str(data['password'])
-    #Name Validation
-    if(len(name)>25):
-        return json.dumps(False)
-    #Email Validation
-    if(re.search(regex,email)==False):
-        return json.dumps(False)
-    #Password Validation
-    flag = 0
-    while True:   
-        if (len(password)<8): 
-            flag = -1
-            break
-        elif not re.search("[a-z]", password): 
-            flag = -1
-            break
-        elif not re.search("[A-Z]", password): 
-            flag = -1
-            break
-        elif not re.search("[0-9]", password): 
-            flag = -1
-            break
-        elif not re.search("[_@$]", password): 
-            flag = -1
-            break
-        elif re.search("\s", password): 
-            flag = -1
-            break
-        else: 
-            flag = 0
-            print("Valid Password") 
-        break
-  
-    if flag ==-1: 
-        return json.dumps(False)
     response = []
     documents=col.find()
     for document in documents:
         document['_id'] = str(document['_id'])
         response.append(document)
-    # print(type(response[0]))
     flag=0
     for i in range(0,len(response)):
         emailreg=response[i]["email"]
@@ -144,15 +112,10 @@ def validateUser():
 @app.route('/adddrone', methods = ["POST"]) 
 def adddrone():
     data=request.json
-    #id=data['id']
     name=str(data['name'])
     capacity=data['capacity']
     availability=str(data['availability'])
     image=str(data['image'])
-    # if(col1.find_one({"name": name})):
-    #     print(col1.find_one({"name": name}))
-    #     return "Drone already registered"
-    # else:
     try:
         col1.insert({ "name": name, "capacity":capacity, "availability":availability,"image":image},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
@@ -171,7 +134,15 @@ def getdrones():
 @app.route('/readDronebyId', methods = ["POST"]) 
 def readdronebyid():
     data=request.json
-    id=data['_id']
+    id=bson.ObjectId(data['_id'])
+    response = []
+    myquery = { "_id": id }
+    documents=col1.find(myquery)
+    return json.dumps(documents)
+
+def readdronesbyid(id):
+    data=request.json
+    id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
     documents=col1.find(myquery)
@@ -213,7 +184,15 @@ def addinventory():
 @app.route('/readInventoryItembyId', methods = ["POST"]) 
 def readinventoryitembyid():
     data=request.json
-    id=data['_id']
+    id=bson.ObjectId(data['_id'])
+    response = []
+    myquery = { "_id": id }
+    documents=col2.find(myquery)
+    return json.dumps(documents)
+
+def readinventoryitemsbyid(id):
+    data=request.json
+    id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
     documents=col2.find(myquery)
@@ -252,29 +231,64 @@ def updateunits():
 @app.route('/addorder', methods = ["POST"]) 
 def addorder():
     data=request.json
-    #id=data['id']
     assigneddrones=data['AssignedDrones']
     dateTimeObj = datetime.now()
     timestamp=dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
     timestamp=timestamp[:-5]
     timestamp+=")"
-    # if(col3.find_one({"id": id})):
-    #     print(col3.find_one({"id": id}))
-    #     return "Order with same ID is present"
-    # else:
     col3.insert({ "AssignedDrones": assigneddrones, "timestamp":timestamp},check_keys=False)
     return json.dumps(True)
 @app.route('/readOrdersById', methods = ["POST"]) 
 def readordersbyid():
     data=request.json
-    id=data['_id']
+    id=bson.ObjectId(data['_id'])
     response = []
     myquery = { "_id": id }
     documents=col3.find(myquery)
     for document in documents:
         document['_id'] = str(document['_id'])
+        document['AssignedDrones']=(document['AssignedDrones'])
+        print(document)
+        print(document['_id'])
+        print(document['AssignedDrones'])
+
+        for x in document['AssignedDrones']:
+            droneId = x['droneid']
+            x['droneid'] = readdronesbyid(droneId)
+            for y in x['inventoryItems']:
+                inventoryId = y['inventoryid']
+                y['inventoryid'] = readinventoryitemsbyid(inventoryId)
+                print(inventoryId)         
         response.append(document)
-    return json.dumps(response)    
+        print("Response is")
+        print(response) 
+    return json.dumps(document)    
+
+def readallordersbyid(id):
+    data=request.json
+    id=bson.ObjectId(id)
+    response = []
+    myquery = { "_id": id }
+    documents=col3.find(myquery)
+    for document in documents:
+        document['_id'] = str(document['_id'])
+        document['AssignedDrones']=(document['AssignedDrones'])
+        print(document)
+        print(document['_id'])
+        print(document['AssignedDrones'])
+
+        for x in document['AssignedDrones']:
+            droneId = x['droneid']
+            x['droneid'] = readdronesbyid(droneId)
+            for y in x['inventoryItems']:
+                inventoryId = y['inventoryid']
+                y['inventoryid'] = readinventoryitemsbyid(inventoryId)
+                print(inventoryId)         
+        response.append(document)
+        print("Response is")
+        print(response) 
+    return json.dumps(document)  
+
 @app.route('/fetchorders', methods = ["GET"]) 
 def fetchorders():
     response = []
@@ -297,10 +311,6 @@ def createmission():
     To=data["to"]
     clientPhotograph=data["clientPhotograph"]
     waypoints=data["waypoints"]
-    # if(col4.find_one({"orderid": orderid})):
-    #     print(col4.find_one({"orderid": orderid}))
-    #     return "Mission already registered"
-    # else:
     try:
         col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
         "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
@@ -321,14 +331,15 @@ def readmissions():
 @app.route('/readMissionById', methods = ["POST"]) 
 def readmissionbyid():
     data=request.json
-    id=data['_id']
+    id=bson.ObjectId(data['_id'])
     response = []
     myquery = { "_id": id }
     documents=col4.find(myquery)
     for document in documents:
+        document['orderid']=readallordersbyid(document['orderid'])
         document['_id'] = str(document['_id'])
         response.append(document)
-    return json.dumps(response)  
+    return json.dumps(response) 
 @app.route('/deleteMissionById', methods = ["DELETE"]) 
 def deletemissionbyid():
     data=request.json
@@ -369,7 +380,6 @@ def assigndrone():
     units=[product['units'] for product in data['product']]
     name=[product['name'] for product in data['product']]
     availability=[product['availability'] for product in data['product']]
-    # image=[product['image'] for product in data['product']]
 
     for i in range(0,len(units)):
         if(units[i]>1):
@@ -473,4 +483,4 @@ def assigndrone():
 
 if __name__ == '__main__': 
   
-    app.run(host='0.0.0.0',port=80,debug = True) 
+    app.run(debug = True) 
