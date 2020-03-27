@@ -294,6 +294,13 @@ def fetchorders():
     response = []
     documents=col3.find()
     for document in documents:
+        for x in document['AssignedDrones']:
+            droneId = x['droneid']
+            x['droneid'] = readdronesbyid(droneId)
+            for y in x['inventoryItems']:
+                inventoryId = y['inventoryid']
+                y['inventoryid'] = readinventoryitemsbyid(inventoryId)
+                print(inventoryId)
         document['_id'] = str(document['_id'])
         response.append(document)
     return json.dumps(response)
@@ -325,6 +332,7 @@ def readmissions():
     response = []
     documents=col4.find()
     for document in documents:
+        document['orderid']=readallordersbyid(document['orderid'])
         document['_id'] = str(document['_id'])
         response.append(document)
     return json.dumps(response)
