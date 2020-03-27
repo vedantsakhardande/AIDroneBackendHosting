@@ -149,7 +149,7 @@ def readdronesbyid(id):
     for document in documents:
         document['_id'] = str(document['_id'])
         response.append(document)
-    return json.dumps(response)
+    return str(response)
 @app.route('/updateavailability', methods = ["PUT"]) 
 def updateavailability():
     data=request.json
@@ -199,7 +199,7 @@ def readinventoryitemsbyid(id):
     for document in documents:
         document['_id'] = str(document['_id'])
         response.append(document)
-    return json.dumps(response)
+    return str(response)
 @app.route('/fetchinventory', methods = ["GET"]) 
 def fetchinventory():
     response = []
@@ -287,7 +287,7 @@ def readallordersbyid(id):
         response.append(document)
         print("Response is")
         print(response) 
-    return json.dumps(document)  
+    return response
 
 @app.route('/fetchorders', methods = ["GET"]) 
 def fetchorders():
