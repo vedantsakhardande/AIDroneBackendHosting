@@ -151,8 +151,8 @@ def readdronesbyid(id):
     documents=col1.find(myquery)
     for document in documents:
         document['_id'] = str(document['_id'])
-        response.append(document)
-    return response
+        # response.append(document)
+    return document
 @app.route('/updateavailability', methods = ["PUT"]) 
 def updateavailability():
     data=request.json
@@ -201,8 +201,8 @@ def readinventoryitemsbyid(id):
     documents=col2.find(myquery)
     for document in documents:
         document['_id'] = str(document['_id'])
-        response.append(document)
-    return response
+        # response.append(document)
+    return document
 @app.route('/fetchinventory', methods = ["GET"]) 
 def fetchinventory():
     response = []
@@ -258,10 +258,15 @@ def readordersbyid():
         for x in document['AssignedDrones']:
             droneId = x['droneid']
             x['drone'] = readdronesbyid(droneId)
+            del x['droneid']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
-                print(inventoryId)         
+                del y['inventoryid']
+                qty=y['quantity']
+                y['inventory']['quantity']=qty
+                y['inventoryitem']=y['inventory']
+                del y['inventory']    
         response.append(document)
         print("Response is")
         print(response) 
@@ -276,24 +281,35 @@ def readallordersbyid(id):
     myquery = { "_id": id }
     documents=col3.find(myquery)
     for document in documents:
+        print("DOCUMENT")
+        print(document)
         document['_id'] = str(document['_id'])
         document['AssignedDrones']=(document['AssignedDrones'])
-        # print(document)
-        # print(document['_id'])
-        # print(document['AssignedDrones'])
 
+        # newlist=[]
         for x in document['AssignedDrones']:
             droneId = x['droneid']
             x['drone'] = readdronesbyid(droneId)
+            del x['droneid']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
-                # print(inventoryId)         
+                del y['inventoryid']
+                qty=y['quantity']
+                y['inventory']['quantity']=qty
+                y['inventoryitem']=y['inventory']
+                del y['inventory']
+                del y['quantity']
+                # print(inventoryId)   
+            
+            # newlist.append(x[0])
+        # print(type(document['AssignedDrones']))
+        # document['AssignedDrones']=newlist
         response.append(document)
         # print("Response is")
         # print(response) 
     print("Response is :",response)
-    return response
+    return document
 
 
 @app.route('/fetchorders', methods = ["GET"]) 
@@ -341,8 +357,6 @@ def readmissions():
     # myquery = { "_id": id }
     documents=col4.find()
     for document in documents:
-        # print(document)
-        # print(type(orderid))
         orderid=bson.ObjectId(document['orderid'])
         document['order']=readallordersbyid(orderid)
         del document['orderid']
