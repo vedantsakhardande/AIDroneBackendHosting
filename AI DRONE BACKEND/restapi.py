@@ -37,7 +37,10 @@ app = Flask(__name__)
 
 @app.route('/signup', methods = ["POST"]) 
 def signup():
+    print(request)
+    print(request.json)
     data=request.json
+    print("Data=",data)
     #id=data['id']
     regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
     name=str(data['name'])
@@ -262,6 +265,7 @@ def readordersbyid():
         response.append(document)
         print("Response is")
         print(response) 
+    print(response)
     return json.dumps(document)    
 
 def readallordersbyid(id):
@@ -364,14 +368,13 @@ def readmissions():
     documents=col4.find()
     for document in documents:
         # print(document)
-        
         # print(type(orderid))
         orderid=bson.ObjectId(document['orderid'])
         document['order']=readallordersbyid(orderid)
-        # print("FUCK OF")
         del document['orderid']
         document['_id'] = str(document['_id'])
         response.append(document)
+    print(response)
     return json.dumps(response)
 @app.route('/readMissionById', methods = ["POST"]) 
 def readmissionbyid():
@@ -411,121 +414,181 @@ def get_image():
 
 @app.route('/assigndrone', methods = ["POST"]) 
 def assigndrone():
-    response = []
-    dronesavailable=[]
-    documents=col1.find()
-    for document in documents:
-        document['_id'] = str(document['_id'])
-        response.append(document)
+    # response = []
+    # dronesavailable=[]
+    # documents=col1.find()
+    # for document in documents:
+    #     document['_id'] = str(document['_id'])
+    #     response.append(document)
     data=request.json
-    for item in response:
-        if(item['availability']=='True'):
-            dronesavailable.append([item['id'],item['name'],item['capacity']])
-    print("Available drones are :")
-    print(dronesavailable)
-    id=[product['id'] for product in data['product']]
-    weight=[product['weight'] for product in data['product']]
-    units=[product['units'] for product in data['product']]
-    name=[product['name'] for product in data['product']]
-    availability=[product['availability'] for product in data['product']]
+    # for item in response:
+    #     if(item['availability']=='True'):
+    #         dronesavailable.append([item['id'],item['name'],item['capacity']])
+    # print("Available drones are :")
+    # print(dronesavailable)
+    # id=[product['id'] for product in data['product']]
+    # weight=[product['weight'] for product in data['product']]
+    # units=[product['units'] for product in data['product']]
+    # name=[product['name'] for product in data['product']]
+    # availability=[product['availability'] for product in data['product']]
 
-    for i in range(0,len(units)):
-        if(units[i]>1):
-            for j in range(1,units[i]):
-                id.insert(i+1,id[i])
-                weight.insert(i+1,weight[i])
-                name.insert(i+1,name[i])
-                availability.insert(i+1,availability[i])
-                units[i]=1
-                units.insert(i+1,1)
+    # for i in range(0,len(units)):
+    #     if(units[i]>1):
+    #         for j in range(1,units[i]):
+    #             id.insert(i+1,id[i])
+    #             weight.insert(i+1,weight[i])
+    #             name.insert(i+1,name[i])
+    #             availability.insert(i+1,availability[i])
+    #             units[i]=1
+    #             units.insert(i+1,1)
     
 
 
-    for i in range(0,len(dronesavailable)-1):
-        for j in range(i+1,len(dronesavailable)):
-            if(dronesavailable[i][2]>dronesavailable[j][2]):
-                dronesavailable[i],dronesavailable[j]=dronesavailable[j],dronesavailable[i]
-    print("Drones after arranging in decreasing order of their weight carrying capacity",dronesavailable)
+    # for i in range(0,len(dronesavailable)-1):
+    #     for j in range(i+1,len(dronesavailable)):
+    #         if(dronesavailable[i][2]>dronesavailable[j][2]):
+    #             dronesavailable[i],dronesavailable[j]=dronesavailable[j],dronesavailable[i]
+    # print("Drones after arranging in decreasing order of their weight carrying capacity",dronesavailable)
 
-    print("ID's are :",id)
-    print("Weight's are :",weight)
-    print("QTY are :",units)
-    print("Availabilty are :",availability)
-    print("Name are :",name)
-    sumofweights=0
-    dronesreqd=[]
-    for i in range(0,len(weight)):
-        sumofweights+=weight[i]
-    visited=[]
-    for i in range(0,len(dronesavailable)):
-        visited.append(0)
-    i=0
-    print("Sum of weights :",sumofweights)
-    while(sumofweights>0):
-        flag=0     
-        while(dronesavailable[i][2]<sumofweights and i<len(dronesavailable)):
-            i+=1
-            flag=1
-            if(i==len(dronesavailable)):
-                break
+    # print("ID's are :",id)
+    # print("Weight's are :",weight)
+    # print("QTY are :",units)
+    # print("Availabilty are :",availability)
+    # print("Name are :",name)
+    # sumofweights=0
+    # dronesreqd=[]
+    # for i in range(0,len(weight)):
+    #     sumofweights+=weight[i]
+    # visited=[]
+    # for i in range(0,len(dronesavailable)):
+    #     visited.append(0)
+    # i=0
+    # print("Sum of weights :",sumofweights)
+    # while(sumofweights>0):
+    #     flag=0     
+    #     while(dronesavailable[i][2]<sumofweights and i<len(dronesavailable)):
+    #         i+=1
+    #         flag=1
+    #         if(i==len(dronesavailable)):
+    #             break
 
-        if(i==len(dronesavailable) and visited[i-1]==1):
-            print("No drone available")
-        elif(flag==1):
-            if(visited[i-1]==1):
-                continue
-            else:
-                print("HHHHHHEEEEEEELLLLLLOOOOOOOO",i-1)
-                dronesreqd.append(dronesavailable[i-1])
-                sumofweights=sumofweights-dronesavailable[i-1][2]
-                visited[i-1]=1
-        else:
-            for k in range(0,len(visited)):
-                if(visited[k]==0):
-                    break
-            print("HHHHHHEEEEEEELLLLLLOOOOOOOO",k)
-            dronesreqd.append(dronesavailable[k])
-            sumofweights=sumofweights-dronesavailable[k][2]
-            visited[k]=1
-        print(sumofweights)
-        i=0
-    print(dronesreqd)
-    #CHECK FROM HERE
-    for i in range(0,len(weight)-1):
-        for j in range(i+1,len(weight)):
-            if(weight[i]<weight[j]):
-                weight[i],weight[j]=weight[j],weight[i]
-                id[i],id[j]=id[j],id[i]
-                units[i],units[j]=units[j],units[i]
-                name[i],name[j]=name[j],name[i]
-                availability[i],availability[j]=availability[j],availability[i]
-    i=0
-    j=0
-    weightleft=dronesreqd[i][2]
-    assigneddrones=[]
-    while(weight[j]<=weightleft):
-        assigneddrones.append([id[j],name[j],availability[j],units[j],weight[j]])
-        weightleft=dronesreqd[i][2]-weight[j]
-        j+=1
-        if(j==len(weight)):
+    #     if(i==len(dronesavailable) and visited[i-1]==1):
+    #         print("No drone available")
+    #     elif(flag==1):
+    #         if(visited[i-1]==1):
+    #             continue
+    #         else:
+    #             print("HHHHHHEEEEEEELLLLLLOOOOOOOO",i-1)
+    #             dronesreqd.append(dronesavailable[i-1])
+    #             sumofweights=sumofweights-dronesavailable[i-1][2]
+    #             visited[i-1]=1
+    #     else:
+    #         for k in range(0,len(visited)):
+    #             if(visited[k]==0):
+    #                 break
+    #         print("HHHHHHEEEEEEELLLLLLOOOOOOOO",k)
+    #         dronesreqd.append(dronesavailable[k])
+    #         sumofweights=sumofweights-dronesavailable[k][2]
+    #         visited[k]=1
+    #     print(sumofweights)
+    #     i=0
+    # print(dronesreqd)
+    # #CHECK FROM HERE
+    # for i in range(0,len(weight)-1):
+    #     for j in range(i+1,len(weight)):
+    #         if(weight[i]<weight[j]):
+    #             weight[i],weight[j]=weight[j],weight[i]
+    #             id[i],id[j]=id[j],id[i]
+    #             units[i],units[j]=units[j],units[i]
+    #             name[i],name[j]=name[j],name[i]
+    #             availability[i],availability[j]=availability[j],availability[i]
+    # i=0
+    # j=0
+    # weightleft=dronesreqd[i][2]
+    # assigneddrones=[]
+    # while(weight[j]<=weightleft):
+    #     assigneddrones.append([id[j],name[j],availability[j],units[j],weight[j]])
+    #     weightleft=dronesreqd[i][2]-weight[j]
+    #     j+=1
+    #     if(j==len(weight)):
+    #         break
+    #     else:
+    #         if(weight[j]>weightleft):
+    #             i+=1
+    #             weightleft=dronesreqd[i][2]
+    # print("Assigned Drones are :",assigneddrones)
+    # finalresponse=[]
+    # for i in range(0,len(dronesreqd)):
+    #     finalresponse.append(
+    #         {
+    #             "id":dronesreqd[i][0],
+    #             "name":dronesreqd[i][1],
+    #             "capacity":dronesreqd[i][2],
+    #             "inventoryItems":assigneddrones[i]
+    #         }
+    #         )
+    solution1='{"AssignedDrones": [{"droneid": "5e79e839126c645b5e33dc2a", "inventoryItems": [{"inventoryid": "5e79ed04aa1a3241186eaf88", "quantity": 8, "inventory": "[{"_id": "5e79ed04aa1a3241186eaf88", "name": "Relispray", "units": 7, "availability": True, "weight": 3, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/relispray.jpg"}]"}, {"inventoryid": "5e79ed22aa1a3241186eaf89", "quantity": 4, "inventory": "[{"_id": "5e79ed22aa1a3241186eaf89", "name": "Tape", "units": 6, "availability": True, "weight": 2, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/tape.jpg"}]"}], "drone": "[{"_id": "5e79e839126c645b5e33dc2a", "name": "Beta", "capacity": 10, "availability": "True", "image": "https://aidrone.s3.ap-south-1.amazonaws.com/beta.jpg"}]"}]}'
+    solution2='{"AssignedDrones": [{"droneid": "5e79e80db2a0d3ac27034e05", "inventoryItems": [{"inventoryid": "5e79ece3aa1a3241186eaf87", "quantity": 7, "inventory": "[{"_id": "5e79ed04aa1a3241186eaf88", "name": "Dettol", "units": 7, "availability": True, "weight": 3, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/dettol.jpg"}]"}, {"inventoryid": "5e79ed04aa1a3241186eaf88", "quantity": 4, "inventory": "[{"_id": "5e79ed22aa1a3241186eaf89", "name": "Tape", "units": 6, "availability": True, "weight": 2, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/tape.jpg"}]"}], "drone": "[{"_id": "5e79e839126c645b5e33dc2a", "name": "Beta", "capacity": 10, "availability": "True", "image": "https://aidrone.s3.ap-south-1.amazonaws.com/beta.jpg"}]"}]}'
+    answer=[solution1,solution2]
+    return json.dumps(answer)
+
+#USER APP APIS START HERE
+
+@app.route('/usersignup', methods = ["POST"]) 
+def usersignup():
+    print(request)
+    print(request.data)
+    data=request.data
+    data = json.loads(data.decode('utf8'))
+    print("Data=",data)
+    #id=data['id']
+    regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+    name=str(data['name'])
+    email=str(data['email'])
+    password=str(data['password'])
+    #Name Validation
+    if(len(name)>25):
+        return json.dumps(False)
+    #Email Validation
+    if(re.search(regex,email)==False):
+        return json.dumps(False)
+    #Password Validation
+    flag = 0
+    while True:   
+        if (len(password)<8): 
+            flag = -1
             break
-        else:
-            if(weight[j]>weightleft):
-                i+=1
-                weightleft=dronesreqd[i][2]
-    print("Assigned Drones are :",assigneddrones)
-    finalresponse=[]
-    for i in range(0,len(dronesreqd)):
-        finalresponse.append(
-            {
-                "id":dronesreqd[i][0],
-                "name":dronesreqd[i][1],
-                "capacity":dronesreqd[i][2],
-                "inventoryItems":assigneddrones[i]
-            }
-            )
-
-    return json.dumps(finalresponse)
+        elif not re.search("[a-z]", password): 
+            flag = -1
+            break
+        elif not re.search("[A-Z]", password): 
+            flag = -1
+            break
+        elif not re.search("[0-9]", password): 
+            flag = -1
+            break
+        elif not re.search("[_@$]", password): 
+            flag = -1
+            break
+        elif re.search("\s", password): 
+            flag = -1
+            break
+        else: 
+            flag = 0
+            print("Valid Password") 
+        break
+  
+    if flag ==-1: 
+        return json.dumps(False)
+    for x in col.find():
+        print(x)
+    print(col.find_one({"email": email}))
+    try:
+        col.insert({ "name": name, "email":email, "password":password},check_keys=False)
+    except pymongo.errors.DuplicateKeyError as e:
+        print(e)
+        return json.dumps(False)
+    return json.dumps(True)
             
 
 
