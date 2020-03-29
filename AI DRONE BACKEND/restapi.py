@@ -152,7 +152,7 @@ def readdronesbyid(id):
     for document in documents:
         document['_id'] = str(document['_id'])
         response.append(document)
-    return str(response)
+    return response
 @app.route('/updateavailability', methods = ["PUT"]) 
 def updateavailability():
     data=request.json
@@ -202,7 +202,7 @@ def readinventoryitemsbyid(id):
     for document in documents:
         document['_id'] = str(document['_id'])
         response.append(document)
-    return str(response)
+    return response
 @app.route('/fetchinventory', methods = ["GET"]) 
 def fetchinventory():
     response = []
@@ -295,32 +295,6 @@ def readallordersbyid(id):
     print("Response is :",response)
     return response
 
-def readmyordersbyid(id):
-    # data=request.json
-    print("Hello i am here")
-    # id=bson.ObjectId(id)
-    response = []
-    myquery = { "_id": id }
-    documents=col3.find(myquery)
-    for document in documents:
-        document['_id'] = str(document['_id'])
-        document['AssignedDrones']=(document['AssignedDrones'])
-        # print(document)
-        # print(document['_id'])
-        # print(document['AssignedDrones'])
-
-        for x in document['AssignedDrones']:
-            droneId = x['droneid']
-            x['drone'] = readdronesbyid(droneId)
-            for y in x['inventoryItems']:
-                inventoryId = y['inventoryid']
-                y['inventory'] = readinventoryitemsbyid(inventoryId)
-                # print(inventoryId)         
-        response.append(document)
-        # print("Response is")
-        # print(response) 
-    print("Response is :",response)
-    return response
 
 @app.route('/fetchorders', methods = ["GET"]) 
 def fetchorders():
