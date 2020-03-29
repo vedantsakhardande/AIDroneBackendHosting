@@ -40,7 +40,7 @@ def connectMyCopter():
 
 def arm_and_takeoff(targetHeight):
 	while vehicle.is_armable!=True:
-		# print("Wait for vehicle to become armable")	
+		print("Wait for vehicle to become armable")	
 		time.sleep
 	print("Vehicle is now armable")
 
@@ -127,7 +127,6 @@ def printVehicleInformation(vehicle):
 def get_distance_metres(aLocation1, aLocation2):
     """
     Returns the ground distance in metres between two LocationGlobal objects.
-
     This method is an approximation, and will not be accurate over large distances and close to the 
     earth's poles. It comes from the ArduPilot test code: 
     https://github.com/diydrones/ardupilot/blob/master/Tools/autotest/common.py
@@ -267,6 +266,7 @@ if __name__ == "__main__":
 		alt=vehicle.location.global_relative_frame.alt
 		#print(type(vehicle.velocity))
 			#print("Drone is executing mission, but we can still run code")
+		time.sleep(2)
 		f.close()
 		# dt = str(datetime.datetime.now())
 		# newname = 'file_'+dt+'.txt'
@@ -339,7 +339,7 @@ if __name__ == "__main__":
 		print("Time to Client is :",clienttime)
 		print("Time to Warehouse is :",warehousetime)
 		print("Vicinity status is :",vicinity)
-		time.sleep(1)
+		time.sleep(3)
 	
 	## Reset variables to sensible values.
 	print("\nReset vehicle attributes/parameters and exit")
@@ -359,4 +359,3 @@ if __name__ == "__main__":
 	    sitl.stop()
 
 	print("Completed")
-
