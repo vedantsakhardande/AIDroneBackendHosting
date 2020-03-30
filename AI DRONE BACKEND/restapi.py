@@ -377,8 +377,8 @@ def readmissionbyid():
         document['order']=readallordersbyid(orderid)
         del document['orderid']
         document['_id'] = str(document['_id'])
-        response.append(document)
-    return json.dumps(response) 
+        # response.append(document)
+    return json.dumps(document) 
 @app.route('/deleteMissionById', methods = ["DELETE"]) 
 def deletemissionbyid():
     data=request.json
@@ -582,4 +582,4 @@ def usersignup():
 
 if __name__ == '__main__': 
   
-    app.run(host='127.0.0.1',port=5000,debug = True) 
+    app.run(host='0.0.0.0',port=80,debug = True) 
