@@ -88,7 +88,7 @@ def assignDrones(DroneSpace,itemspace):
             ItemsSubset = ItemsSubset + findsubsets(itemsleft,v)
         for v in range(0,len(ItemsSubset)):
             ItemsSubset[v]=list(ItemsSubset[v])
-        MasterItem=ItemsSubset.copy()
+        MasterItem=ItemsSubset[:]
         for v in range(0,len(MasterItem)):
             MasterItem[v]=sum(MasterItem[v])
         max=0
