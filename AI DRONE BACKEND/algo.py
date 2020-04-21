@@ -1,7 +1,5 @@
 import itertools
 
-
-
 def sub_lists(list1): 
     sublist = [[]] 
     for i in range(len(list1) + 1):  
