@@ -1,7 +1,5 @@
 import itertools
 
-
-
 def sub_lists(list1): 
     sublist = [[]] 
     for i in range(len(list1) + 1):  
@@ -18,7 +16,7 @@ def assignDrones(DroneSpace,itemspace):
     itemspace = itemspace
     print("Drone Weights are : ",DroneSpace)
     print("Items to be Delivered are :",itemspace)
-    itemsleft = itemspace.copy()
+    itemsleft = itemspace[:]
     visited=[]
     answer=[]
     for i in range(0,len(DroneSpace)):
@@ -43,7 +41,7 @@ def assignDrones(DroneSpace,itemspace):
     templist = []
     for i in range(0,len(MasterItem)):
         MasterItem[i]=list(MasterItem[i])
-    ItemsSubset=MasterItem.copy()
+    ItemsSubset=MasterItem[:]
     for i in range(0,len(MasterItem)):
         MasterItem[i]=sum(MasterItem[i])
     for i in range(0,len(MasterItem)):
@@ -90,7 +88,7 @@ def assignDrones(DroneSpace,itemspace):
             ItemsSubset = ItemsSubset + findsubsets(itemsleft,v)
         for v in range(0,len(ItemsSubset)):
             ItemsSubset[v]=list(ItemsSubset[v])
-        MasterItem=ItemsSubset.copy()
+        MasterItem=ItemsSubset[:]
         for v in range(0,len(MasterItem)):
             MasterItem[v]=sum(MasterItem[v])
         max=0
