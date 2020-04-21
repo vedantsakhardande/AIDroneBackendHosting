@@ -16,7 +16,7 @@ def assignDrones(DroneSpace,itemspace):
     itemspace = itemspace
     print("Drone Weights are : ",DroneSpace)
     print("Items to be Delivered are :",itemspace)
-    itemsleft = itemspace.copy()
+    itemsleft = itemspace[:]
     visited=[]
     answer=[]
     for i in range(0,len(DroneSpace)):
@@ -41,7 +41,7 @@ def assignDrones(DroneSpace,itemspace):
     templist = []
     for i in range(0,len(MasterItem)):
         MasterItem[i]=list(MasterItem[i])
-    ItemsSubset=MasterItem.copy()
+    ItemsSubset=MasterItem[:]
     for i in range(0,len(MasterItem)):
         MasterItem[i]=sum(MasterItem[i])
     for i in range(0,len(MasterItem)):
