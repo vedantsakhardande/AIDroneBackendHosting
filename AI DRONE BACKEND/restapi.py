@@ -428,6 +428,7 @@ def assigndrone():
     units=[product['units'] for product in data['product']]
     name=[product['name'] for product in data['product']]
     availability=[product['availability'] for product in data['product']]
+    image=[product['image'] for product in data['product']]
 
     for i in range(0,len(units)):
         if(units[i]>1):
@@ -436,11 +437,9 @@ def assigndrone():
                 weight.insert(i+1,weight[i])
                 name.insert(i+1,name[i])
                 availability.insert(i+1,availability[i])
+                image.insert(i+1,image[i])
                 units[i]=1
                 units.insert(i+1,1)
-    
-
-
     for i in range(0,len(dronesavailable)-1):
         for j in range(i+1,len(dronesavailable)):
             if(dronesavailable[i][2]>dronesavailable[j][2]):
@@ -479,10 +478,19 @@ def assigndrone():
                 inventoryval['inventory_id']=id[ind]
                 inventoryval['inventory_name']=name[ind]
                 inventoryval['inventory_weight']=weight[ind]
+                inventoryval['quantity']=1
+                inventoryval['inventory_image']=image[ind]
                 # val.append([id[ind],weight[ind]])
                 val.append(inventoryval)
                 weight[ind]=-1
                 key=str(dronesinfo[i])
+            for j in range(0,len(val)-1):
+                if(val[j]!=0):
+                    for k in range(j+1,len(val)):
+                        if(val[j]['inventory_id']==val[k]['inventory_id']):
+                            val[j]['quantity']+=1
+                            val[k]=0
+            val=list(filter(lambda a: a != 0, val))
             droneval['drone_id']=dronesinfo[i][0]
             droneval['drone_name']=dronesinfo[i][1]
             droneval['drone_capacity']=dronesinfo[i][2]
@@ -587,26 +595,14 @@ def UserValidation():
 def getQrCode():
     data=request.data
     data = json.loads(data.decode('utf8'))
-    print(data)
-    
-    print("Hello")
     number=random.randint(1,100)
     number=number*random.randint(1,100)
     number=number*random.randint(1,100)
     number=number*random.randint(1,100)
     number=number*random.randint(1,100)
-    # qr.add_data(number)
-    # qr.make(fit=True)
-
-    # img = qr.make_image(fill_color="black", back_color="white")
-    # img = img.save("code.jpg")
-    # filename='code.jpg'
     print(number)
     global qrcodenumber
-    qrcodenumber=number
-    # return send_file(filename, mimetype='image/gif')
-    # num="{'number':"+str(number)+"}"
-    # num={"number":number}
+    qrcodenumber=number    
     return json.dumps(number)
 
 @app.route('/setQrScanNumber', methods = ["POST"]) 
