@@ -85,8 +85,6 @@ def getandcheckqr():
       elif key & 0xFF == ord('s'): # wait for 's' key to save 
           cv2.imwrite('Capture.png', frame)     
 
-  # When everything done, release the capture
-
   print("QRCODE VALUE IS :",val)
   params = {
   'qrscannumber': val
