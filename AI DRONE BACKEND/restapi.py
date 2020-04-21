@@ -9,8 +9,10 @@ import pymongo
 import re
 from flask_restplus import Api, Resource
 from flask_swagger import swagger
-
-
+from flask_cors import CORS
+import qrcode
+import random
+from algo import assignDrones
 
 client = MongoClient('mongodb+srv://ai-drone:oOIUq8IGcTVKy7JV@cluster0-igbga.mongodb.net/test?retryWrites=true&w=majority',27017)
 # client=MongoClient('localhost',27017)
@@ -25,8 +27,13 @@ col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
 col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
+# FOR USER APP
+db1=client.droneusers
+usercol=db1.user
+
 
 app = Flask(__name__) 
+CORS(app)
 # swaggerapp = Api(app = app)
 # name_space = swaggerapp.namespace('main', description='Main APIs')
 
@@ -402,125 +409,96 @@ def get_image():
 
 @app.route('/assigndrone', methods = ["POST"]) 
 def assigndrone():
-    # response = []
-    # dronesavailable=[]
-    # documents=col1.find()
-    # for document in documents:
-    #     document['_id'] = str(document['_id'])
-    #     response.append(document)
+    response = []
+    dronesavailable=[]
+    documents=col1.find()
+    for document in documents:
+        document['_id'] = str(document['_id'])
+        response.append(document)
     data=request.json
-    # for item in response:
-    #     if(item['availability']=='True'):
-    #         dronesavailable.append([item['id'],item['name'],item['capacity']])
-    # print("Available drones are :")
-    # print(dronesavailable)
-    # id=[product['id'] for product in data['product']]
-    # weight=[product['weight'] for product in data['product']]
-    # units=[product['units'] for product in data['product']]
-    # name=[product['name'] for product in data['product']]
-    # availability=[product['availability'] for product in data['product']]
+    print("Response is :",response)
+    for item in response:
+        print("Item is :",item)
+        if(item['availability']=='True'):
+            dronesavailable.append([item['_id'],item['name'],item['capacity'],item['availability'],item['image']])
+    print("Available drones are :")
+    print(dronesavailable)
+    id=[product['_id'] for product in data['product']]
+    weight=[product['weight'] for product in data['product']]
+    units=[product['units'] for product in data['product']]
+    name=[product['name'] for product in data['product']]
+    availability=[product['availability'] for product in data['product']]
 
-    # for i in range(0,len(units)):
-    #     if(units[i]>1):
-    #         for j in range(1,units[i]):
-    #             id.insert(i+1,id[i])
-    #             weight.insert(i+1,weight[i])
-    #             name.insert(i+1,name[i])
-    #             availability.insert(i+1,availability[i])
-    #             units[i]=1
-    #             units.insert(i+1,1)
+    for i in range(0,len(units)):
+        if(units[i]>1):
+            for j in range(1,units[i]):
+                id.insert(i+1,id[i])
+                weight.insert(i+1,weight[i])
+                name.insert(i+1,name[i])
+                availability.insert(i+1,availability[i])
+                units[i]=1
+                units.insert(i+1,1)
     
 
 
-    # for i in range(0,len(dronesavailable)-1):
-    #     for j in range(i+1,len(dronesavailable)):
-    #         if(dronesavailable[i][2]>dronesavailable[j][2]):
-    #             dronesavailable[i],dronesavailable[j]=dronesavailable[j],dronesavailable[i]
-    # print("Drones after arranging in decreasing order of their weight carrying capacity",dronesavailable)
-
-    # print("ID's are :",id)
-    # print("Weight's are :",weight)
-    # print("QTY are :",units)
-    # print("Availabilty are :",availability)
-    # print("Name are :",name)
-    # sumofweights=0
-    # dronesreqd=[]
-    # for i in range(0,len(weight)):
-    #     sumofweights+=weight[i]
-    # visited=[]
-    # for i in range(0,len(dronesavailable)):
-    #     visited.append(0)
-    # i=0
-    # print("Sum of weights :",sumofweights)
-    # while(sumofweights>0):
-    #     flag=0     
-    #     while(dronesavailable[i][2]<sumofweights and i<len(dronesavailable)):
-    #         i+=1
-    #         flag=1
-    #         if(i==len(dronesavailable)):
-    #             break
-
-    #     if(i==len(dronesavailable) and visited[i-1]==1):
-    #         print("No drone available")
-    #     elif(flag==1):
-    #         if(visited[i-1]==1):
-    #             continue
-    #         else:
-    #             print("HHHHHHEEEEEEELLLLLLOOOOOOOO",i-1)
-    #             dronesreqd.append(dronesavailable[i-1])
-    #             sumofweights=sumofweights-dronesavailable[i-1][2]
-    #             visited[i-1]=1
-    #     else:
-    #         for k in range(0,len(visited)):
-    #             if(visited[k]==0):
-    #                 break
-    #         print("HHHHHHEEEEEEELLLLLLOOOOOOOO",k)
-    #         dronesreqd.append(dronesavailable[k])
-    #         sumofweights=sumofweights-dronesavailable[k][2]
-    #         visited[k]=1
-    #     print(sumofweights)
-    #     i=0
-    # print(dronesreqd)
-    # #CHECK FROM HERE
-    # for i in range(0,len(weight)-1):
-    #     for j in range(i+1,len(weight)):
-    #         if(weight[i]<weight[j]):
-    #             weight[i],weight[j]=weight[j],weight[i]
-    #             id[i],id[j]=id[j],id[i]
-    #             units[i],units[j]=units[j],units[i]
-    #             name[i],name[j]=name[j],name[i]
-    #             availability[i],availability[j]=availability[j],availability[i]
-    # i=0
-    # j=0
-    # weightleft=dronesreqd[i][2]
-    # assigneddrones=[]
-    # while(weight[j]<=weightleft):
-    #     assigneddrones.append([id[j],name[j],availability[j],units[j],weight[j]])
-    #     weightleft=dronesreqd[i][2]-weight[j]
-    #     j+=1
-    #     if(j==len(weight)):
-    #         break
-    #     else:
-    #         if(weight[j]>weightleft):
-    #             i+=1
-    #             weightleft=dronesreqd[i][2]
-    # print("Assigned Drones are :",assigneddrones)
-    # finalresponse=[]
-    # for i in range(0,len(dronesreqd)):
-    #     finalresponse.append(
-    #         {
-    #             "id":dronesreqd[i][0],
-    #             "name":dronesreqd[i][1],
-    #             "capacity":dronesreqd[i][2],
-    #             "inventoryItems":assigneddrones[i]
-    #         }
-    #         )
-    solution1='{"AssignedDrones": [{"droneid": "5e79e839126c645b5e33dc2a", "inventoryItems": [{"inventoryid": "5e79ed04aa1a3241186eaf88", "quantity": 8, "inventory": "[{"_id": "5e79ed04aa1a3241186eaf88", "name": "Relispray", "units": 7, "availability": True, "weight": 3, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/relispray.jpg"}]"}, {"inventoryid": "5e79ed22aa1a3241186eaf89", "quantity": 4, "inventory": "[{"_id": "5e79ed22aa1a3241186eaf89", "name": "Tape", "units": 6, "availability": True, "weight": 2, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/tape.jpg"}]"}], "drone": "[{"_id": "5e79e839126c645b5e33dc2a", "name": "Beta", "capacity": 10, "availability": "True", "image": "https://aidrone.s3.ap-south-1.amazonaws.com/beta.jpg"}]"}]}'
-    solution2='{"AssignedDrones": [{"droneid": "5e79e80db2a0d3ac27034e05", "inventoryItems": [{"inventoryid": "5e79ece3aa1a3241186eaf87", "quantity": 7, "inventory": "[{"_id": "5e79ed04aa1a3241186eaf88", "name": "Dettol", "units": 7, "availability": True, "weight": 3, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/dettol.jpg"}]"}, {"inventoryid": "5e79ed04aa1a3241186eaf88", "quantity": 4, "inventory": "[{"_id": "5e79ed22aa1a3241186eaf89", "name": "Tape", "units": 6, "availability": True, "weight": 2, "image": "https://aidrone.s3.ap-south-1.amazonaws.com/tape.jpg"}]"}], "drone": "[{"_id": "5e79e839126c645b5e33dc2a", "name": "Beta", "capacity": 10, "availability": "True", "image": "https://aidrone.s3.ap-south-1.amazonaws.com/beta.jpg"}]"}]}'
-    answer=[solution1,solution2]
-    return json.dumps(answer)
+    for i in range(0,len(dronesavailable)-1):
+        for j in range(i+1,len(dronesavailable)):
+            if(dronesavailable[i][2]>dronesavailable[j][2]):
+                dronesavailable[i],dronesavailable[j]=dronesavailable[j],dronesavailable[i]
+    print("Drones after arranging in decreasing order of their weight carrying capacity",dronesavailable)
+    print("Id's are :",id)
+    print("Weights are :",weight)
+    visited=[]
+    for i in range(0,len(weight)):
+        visited.append(0)
+    dronespace=[]
+    dronesinfo=[]
+    for i in range(0,len(dronesavailable)):
+        dronespace.append(dronesavailable[i][2])
+    for i in range(0,len(dronesavailable)):
+        dronesinfo.append(dronesavailable[i])
+    for i in range(0,len(dronesinfo)-1):
+        for j in range(i+1,len(dronesinfo)):
+            if(dronesinfo[i][2]<dronesinfo[j][2]):
+                dronesinfo[i],dronesinfo[j]=dronesinfo[j],dronesinfo[i]
+    for i in range(0,len(dronespace)-1):
+        for j in range(i+1,len(dronespace)):
+            if(dronespace[i]<dronespace[j]):
+                dronespace[i],dronespace[j]=dronespace[j],dronespace[i]
+    print("Drone Space is : ",dronespace)
+    assigneddronesvalue=assignDrones(dronespace,weight)
+    print("Assigned Drones are :",assigneddronesvalue)
+    finalans=[]
+    for i in range(0,len(assigneddronesvalue)):
+        if(assigneddronesvalue[i]!=0):
+            val=[]
+            droneval={}
+            inventoryval={}
+            for j in range(0,len(assigneddronesvalue[i])):
+                ind=weight.index(assigneddronesvalue[i][j])
+                inventoryval['inventory_id']=id[ind]
+                inventoryval['inventory_name']=name[ind]
+                inventoryval['inventory_weight']=weight[ind]
+                # val.append([id[ind],weight[ind]])
+                val.append(inventoryval)
+                weight[ind]=-1
+                key=str(dronesinfo[i])
+            droneval['drone_id']=dronesinfo[i][0]
+            droneval['drone_name']=dronesinfo[i][1]
+            droneval['drone_capacity']=dronesinfo[i][2]
+            droneval['drone_availability']=dronesinfo[i][3]
+            droneval['drone_image']=dronesinfo[i][4]
+            droneval['inventoryItems']=val
+            finalans.append(droneval)
+                # finalans[key]=val
+    print("Final Answer is :",finalans)
+    return json.dumps(finalans)
 
 #USER APP APIS START HERE
+
+qrcodenumber=-1
+qrscannumber=-1
+
 
 @app.route('/usersignup', methods = ["POST"]) 
 def usersignup():
@@ -568,18 +546,93 @@ def usersignup():
   
     if flag ==-1: 
         return json.dumps(False)
-    for x in col.find():
+    for x in usercol.find():
         print(x)
-    print(col.find_one({"email": email}))
+    print(usercol.find_one({"email": email}))
     try:
-        col.insert({ "name": name, "email":email, "password":password},check_keys=False)
+        usercol.insert({ "name": name, "email":email, "password":password},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
     return json.dumps(True)
-            
+
+@app.route('/userValidation', methods = ["POST"]) 
+def UserValidation():
+    data=request.data
+    data = json.loads(data.decode('utf8'))
+    print(data)
+    email=str(data['email'])
+    password=str(data['password'])
+    print(email)
+    print(password)
+    response = []
+    documents=usercol.find()
+    for document in documents:
+        document['_id'] = str(document['_id'])
+        response.append(document)
+    flag=0
+    for i in range(0,len(response)):
+        emailreg=response[i]["email"]
+        passwordreg=response[i]["password"]
+        if(password==passwordreg and email==emailreg):
+            flag=1
+            break
+    if(flag==1):
+        return json.dumps(True)
+    else:
+        return json.dumps(False)   
 
 
-if __name__ == '__main__': 
-  
-    app.run(host='0.0.0.0',port=80,debug = True) 
+@app.route('/getQrCode', methods = ["POST"]) 
+def getQrCode():
+    data=request.data
+    data = json.loads(data.decode('utf8'))
+    print(data)
+    
+    print("Hello")
+    number=random.randint(1,100)
+    number=number*random.randint(1,100)
+    number=number*random.randint(1,100)
+    number=number*random.randint(1,100)
+    number=number*random.randint(1,100)
+    # qr.add_data(number)
+    # qr.make(fit=True)
+
+    # img = qr.make_image(fill_color="black", back_color="white")
+    # img = img.save("code.jpg")
+    # filename='code.jpg'
+    print(number)
+    global qrcodenumber
+    qrcodenumber=number
+    # return send_file(filename, mimetype='image/gif')
+    # num="{'number':"+str(number)+"}"
+    # num={"number":number}
+    return json.dumps(number)
+
+@app.route('/setQrScanNumber', methods = ["POST"]) 
+def setQrScanNumber():
+    data=request.form['qrscannumber']
+    print("Data is :",data)
+    global qrscannumber
+    qrscannumber=data
+    print(qrscannumber)
+    return json.dumps(True)
+
+@app.route('/checkQrCode', methods = ["POST"]) 
+def checkQrCode():
+    data=request.data
+    data = json.loads(data.decode('utf8'))
+    print(data)
+    global qrcodenumber
+    global qrscannumber
+    print("Hello")
+    print("QRCODE SCAN NUMBER  :",qrscannumber)
+    print("QRCODE GEN NUMBER :",qrcodenumber)
+    if(str(qrcodenumber)==str(qrscannumber)):
+        qrscannumber=-1
+        return json.dumps(True)
+    else:
+        return json.dumps(False)
+
+if __name__ == '__main__':  
+    app.run(host='0.0.0.0',port=80,debug = True)
