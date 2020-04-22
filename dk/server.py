@@ -22,7 +22,7 @@ app = Flask(__name__)
 # cors = CORS(app, resources={r"*": {"origins": "*"}})
 CORS(app)
 
-portno=5759
+portno=5750
 #COORDINATE API
 @app.route('/coordinates', methods=['POST'])
 def givelocation():
@@ -35,7 +35,7 @@ def givelocation():
 		des_lat = des['lat']
 		des_lon = des['lon']
 		global portno
-		portno+=1
+		portno+=10
 		start.execute(src_lat,src_lon,des_lat,des_lon,portno)
 		time.sleep(5)
 		return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
