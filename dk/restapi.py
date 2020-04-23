@@ -356,8 +356,8 @@ def createmission():
         "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
-        return False
-    return True
+        return json.dumps(False)
+    return json.dumps(True)
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
     # id=bson.ObjectId(data['_id'])
