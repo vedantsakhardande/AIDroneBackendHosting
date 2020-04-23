@@ -363,11 +363,13 @@ def createmission():
         # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
         # "distanceTravelled":distanceTravelled,"From":From,"To":To,
         # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
-        col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
+        mid=col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
-    return json.dumps(True)
+    ans={}
+    ans['mission_id']=mid
+    return json.dumps(ans)
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
     # id=bson.ObjectId(data['_id'])
