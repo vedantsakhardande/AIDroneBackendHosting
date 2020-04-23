@@ -440,7 +440,7 @@ def readmissionbyid():
         document['_id'] = str(document['_id'])
         response.append(document)
     print("Response",response)
-    return json.dumps(response)
+    return json.dumps(document)
     # return json.dumps(document) 
 @app.route('/deleteMissionById', methods = ["DELETE"]) 
 def deletemissionbyid():
