@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 from flask import Flask, jsonify, request 
 import json
+import requests
+import json
 import bson
 from datetime import datetime
 from flask import send_file
@@ -14,6 +16,7 @@ import qrcode
 import random
 from algo import assignDrones
 import start
+import ast
 
 client = MongoClient('mongodb+srv://ai-drone:oOIUq8IGcTVKy7JV@cluster0-igbga.mongodb.net/test?retryWrites=true&w=majority',27017)
 # client=MongoClient('localhost',27017)
@@ -26,7 +29,7 @@ col4=db.mission
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
-# col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
 # FOR USER APP
 db1=client.droneusers
@@ -35,12 +38,8 @@ usercol=db1.user
 
 app = Flask(__name__) 
 CORS(app)
-# swaggerapp = Api(app = app)
-# name_space = swaggerapp.namespace('main', description='Main APIs')
 
-# @app.route("/spec")
-# def spec():
-#     return jsonify(swagger(app))
+# STAKEHOLDER APP APIs
 
 
 @app.route('/signup', methods = ["POST"]) 
@@ -152,7 +151,7 @@ def readdronebyid():
     return json.dumps(documents)
 
 def readdronesbyid(id):
-    data=request.json
+    # data=request.json
     id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
@@ -202,7 +201,6 @@ def readinventoryitembyid():
     return json.dumps(documents)
 
 def readinventoryitemsbyid(id):
-    data=request.json
     id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
@@ -267,9 +265,9 @@ def readordersbyid():
         print(document['AssignedDrones'])
 
         for x in document['AssignedDrones']:
-            droneId = x['drone_id']
+            droneId = x['droneid']
             x['drone'] = readdronesbyid(droneId)
-            del x['drone_id']
+            del x['droneid']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -285,24 +283,30 @@ def readordersbyid():
     return json.dumps(document)    
 
 def readallordersbyid(id):
-    data=request.json
     print("Hello i am here")
     id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
     documents=col3.find(myquery)
+    answer=documents
     for document in documents:
         print("DOCUMENT")
         print(document)
         document['_id'] = str(document['_id'])
         document['AssignedDrones']=(document['AssignedDrones'])
 
-        # newlist=[]
+        print("In here")
+        print("Assigned Drones are :",document['AssignedDrones'])
         for x in document['AssignedDrones']:
-            droneId = x['drone_id']
+            print("A")
+            droneId = x['droneid']
+            print("B")
             x['drone'] = readdronesbyid(droneId)
-            del x['drone_id']
+            print("C")
+            del x['droneid']
+            print("D")
             for y in x['inventoryItems']:
+                print("Y is :",y)
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
                 del y['inventoryid']
@@ -312,15 +316,19 @@ def readallordersbyid(id):
                 del y['inventory']
                 del y['quantity']
                 # print(inventoryId)   
-            
+            print("E")
+        print("Out here")
             # newlist.append(x[0])
         # print(type(document['AssignedDrones']))
         # document['AssignedDrones']=newlist
+        print("Document is :",document)
         response.append(document)
         # print("Response is")
-        # print(response) 
+        # print(response)
+    print("Hello From Orders")
+    # print("Document is :",document)
     print("Response is :",response)
-    return document
+    return response
 
 
 @app.route('/fetchorders', methods = ["GET"]) 
@@ -329,7 +337,7 @@ def fetchorders():
     documents=col3.find()
     for document in documents:
         for x in document['AssignedDrones']:
-            droneId = x['drone_id']
+            droneId = x['droneid']
             x['drone'] = readdronesbyid(droneId)
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
@@ -350,31 +358,73 @@ def createmission():
     # distanceTravelled=data["distanceTravelled"]
     From=data["from"]
     To=data["to"]
+    src_lat=data['src_lat']
+    src_lon=data['src_lon']
+    dest_lat=data['dest_lat']
+    dest_lon=data['dest_lon']
     # clientPhotograph=data["clientPhotograph"]
     # waypoints=data["waypoints"]
+    params = {
+	"src":{
+		"lat":src_lat,
+		"lon":src_lon
+	},
+	"des":{
+		"lat":dest_lat,
+		"lon":dest_lon
+	}
+}
+    headers = {'content-type': 'application/json'}
+    response = requests.post(
+    'http://13.234.119.101/generate-waypoints',
+    data=json.dumps(params),headers=headers)
+    wp=response.json()
+    print("WP :",wp)
+    waypoints=[]
+    temp={}
+    temp['lat']=src_lat
+    temp['lng']=src_lon
+    waypoints.append(temp)
+    for i in range(0,len(wp)):
+        waypoints.append(wp[i]["waypoint"])
+    print("Waypoints are :",waypoints)
+    for i in range(0,len(waypoints)):
+        print("Lat :"+str(waypoints[i]['lat'])+"Lon :"+str(waypoints[i]['lng']))
+    temp={}
+    temp['lat']=dest_lat
+    temp['lng']=dest_lon
+    waypoints.append(temp)
     try:
         # col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
         # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
         # "distanceTravelled":distanceTravelled,"From":From,"To":To,
         # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
-        col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
+        mid=col4.insert({"orderid": orderid,"from":From,"to":To,"waypoints":waypoints},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
-    return json.dumps(True)
+    ans={}
+    ans['mission_id']=str(mid)
+    print("Answer is :",ans)
+    print(type(ans))
+    return json.dumps(ans)
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
     # id=bson.ObjectId(data['_id'])
+    print("Read Missions")
     response = []
     # myquery = { "_id": id }
     documents=col4.find()
+    print("Hello")
     for document in documents:
         orderid=bson.ObjectId(document['orderid'])
+        print("Hello")
         document['order']=readallordersbyid(orderid)
+        print("World")
         del document['orderid']
         document['_id'] = str(document['_id'])
         response.append(document)
-    print(response)
+    print("Response",response)
     return json.dumps(response)
 @app.route('/readMissionById', methods = ["POST"]) 
 def readmissionbyid():
@@ -384,13 +434,14 @@ def readmissionbyid():
     myquery = { "_id": id }
     documents=col4.find(myquery)
     for document in documents:
-        print(type(document['orderid']))
         orderid=bson.ObjectId(document['orderid'])
         document['order']=readallordersbyid(orderid)
         del document['orderid']
         document['_id'] = str(document['_id'])
-        # response.append(document)
-    return json.dumps(document) 
+        response.append(document)
+    print("Response",response)
+    return json.dumps(document)
+    # return json.dumps(document) 
 @app.route('/deleteMissionById', methods = ["DELETE"]) 
 def deletemissionbyid():
     data=request.json
@@ -663,5 +714,5 @@ def givelocation():
 if __name__ == '__main__':  
     app.run(host='0.0.0.0',port=80,debug = True)
 
-        
-   
+
+
