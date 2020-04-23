@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 from flask import Flask, jsonify, request 
 import json
+import requests
+import json
 import bson
 from datetime import datetime
 from flask import send_file
@@ -14,6 +16,7 @@ import qrcode
 import random
 from algo import assignDrones
 import start
+import ast
 
 client = MongoClient('mongodb+srv://ai-drone:oOIUq8IGcTVKy7JV@cluster0-igbga.mongodb.net/test?retryWrites=true&w=majority',27017)
 # client=MongoClient('localhost',27017)
@@ -26,7 +29,7 @@ col4=db.mission
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
-# col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
 # FOR USER APP
 db1=client.droneusers
@@ -35,12 +38,8 @@ usercol=db1.user
 
 app = Flask(__name__) 
 CORS(app)
-# swaggerapp = Api(app = app)
-# name_space = swaggerapp.namespace('main', description='Main APIs')
 
-# @app.route("/spec")
-# def spec():
-#     return jsonify(swagger(app))
+# STAKEHOLDER APP APIs
 
 
 @app.route('/signup', methods = ["POST"]) 
@@ -356,19 +355,45 @@ def createmission():
     # distanceTravelled=data["distanceTravelled"]
     From=data["from"]
     To=data["to"]
+    src_lat=data['src_lat']
+    src_lon=data['src_lon']
+    dest_lat=data['dest_lat']
+    dest_lon=data['dest_lon']
     # clientPhotograph=data["clientPhotograph"]
     # waypoints=data["waypoints"]
+    params = {
+	"src":{
+		"lat":src_lat,
+		"lon":src_lon
+	},
+	"des":{
+		"lat":dest_lat,
+		"lon":dest_lon
+	}
+}
+    headers = {'content-type': 'application/json'}
+    response = requests.post(
+    'http://13.234.119.101/generate-waypoints',
+    data=json.dumps(params),headers=headers)
+    wp=response.json()
+    print("WP :",wp)
+    waypoints=[]
+    for i in range(0,len(wp)):
+        waypoints.append(wp[i]["waypoint"])
+    print("Waypoints are :",waypoints)
     try:
         # col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
         # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
         # "distanceTravelled":distanceTravelled,"From":From,"To":To,
         # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
-        mid=col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
+        mid=col4.insert({"orderid": orderid,"from":From,"to":To,"waypoints":waypoints},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
     ans={}
-    ans['mission_id']=mid
+    ans['mission_id']=str(mid)
+    print("Answer is :",ans)
+    print(type(ans))
     return json.dumps(ans)
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
@@ -673,7 +698,7 @@ def givelocation():
 	return "Hello World"
 
 if __name__ == '__main__':  
-    app.run(host='0.0.0.0',port=80,debug = True)
+    app.run(host='127.0.0.1',port=5000,debug = True)
 
         
    
