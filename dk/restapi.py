@@ -324,7 +324,7 @@ def readallordersbyid(id):
         # print("Response is")
         # print(response) 
     print("Response is :",response)
-    return document
+    return response
 
 
 @app.route('/fetchorders', methods = ["GET"]) 
