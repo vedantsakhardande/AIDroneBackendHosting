@@ -365,6 +365,7 @@ def createmission():
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
     # id=bson.ObjectId(data['_id'])
+    print("Read Missions")
     response = []
     # myquery = { "_id": id }
     documents=col4.find()
