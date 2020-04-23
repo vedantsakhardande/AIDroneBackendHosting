@@ -18,8 +18,6 @@ import requests
 
 #function#
 
- 
-
 def connectMyCopter():
     #make a parser object
 	parser = argparse.ArgumentParser(description='Print out vehicle state information. Connects to SITL on local PC by default.') 
