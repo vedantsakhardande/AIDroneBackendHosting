@@ -322,7 +322,9 @@ def readallordersbyid(id):
         # document['AssignedDrones']=newlist
         response.append(document)
         # print("Response is")
-        # print(response) 
+        # print(response)
+    print("Hello From Orders")
+    print("Document is :",document)
     print("Response is :",response)
     return json.dumps(response[0])
 
