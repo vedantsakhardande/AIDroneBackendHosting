@@ -183,11 +183,41 @@ if __name__ == "__main__":
 	des_lon=float(data[1])
 	src_lat=wphome.lat
 	src_lon=wphome.lon
+	params = {
+	"src":{
+		"lat":src_lat,
+		"lon":src_lon
+	},
+	"des":{
+		"lat":des_lat,
+		"lon":des_lon
+	}
+}
+	headers = {'content-type': 'application/json'}
+	response = requests.post(
+	'http://13.234.119.101/generate-waypoints',
+	data=json.dumps(params),headers=headers)
+	wp=response.json()
+	print("WP :",wp)
+	waypoints=[]
+	for i in range(0,len(wp)):
+		waypoints.append(wp[i]["waypoint"])
+	print("Waypoints are :",waypoints)
 	deleteContent("passcoord.txt")
-	cmd1=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,wphome.lat,wphome.lon,wphome.alt)
-	cmd2=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,des_lat,des_lon,15)
+	commands=[]
+	source=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,wphome.lat,wphome.lon,wphome.alt)
+	commands.append(source)
+	for i in range(0,len(waypoints)):
+		cmd=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,waypoints[i]['lat'],waypoints[i]['lng'],15)
+		commands.append(cmd)
+	destination=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,des_lat,des_lon,15)
+	commands.append(destination)
+	for i in range(len(waypoints)-1,-1,-1):
+		cmd=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,waypoints[i]['lat'],waypoints[i]['lng'],15)
+		commands.append(cmd)
 	# cmd3=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_WAYPOINT,0,0,0,0,0,0,19.046592,72.821771,20)
-	cmd3=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_RETURN_TO_LAUNCH,0,0,0,0,0,0,0,0,0)
+	backtosource=Command(0,0,0,mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,mavutil.mavlink.MAV_CMD_NAV_RETURN_TO_LAUNCH,0,0,0,0,0,0,0,0,0)
+	commands.append(backtosource)
 
 
 
@@ -227,9 +257,11 @@ if __name__ == "__main__":
 	cmds.clear()
 
 ##ADD in our new commands
-	cmds.add(cmd1)
-	cmds.add(cmd2)
-	cmds.add(cmd3)
+
+	for i in range(0,len(commands)):
+		cmds.add(commands[i])
+		# cmds.add(cmd2)
+		# cmds.add(cmd3)
 	# cmds.add(cmd4)
 	##Upload our commands to the drone
 	vehicle.commands.upload()
