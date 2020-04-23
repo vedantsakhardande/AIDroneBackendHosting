@@ -26,7 +26,7 @@ col4=db.mission
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
-col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+# col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
 # FOR USER APP
 db1=client.droneusers
@@ -249,8 +249,9 @@ def addorder():
     timestamp+=")"
     odid=col3.insert({ "AssignedDrones": assigneddrones, "timestamp":timestamp},check_keys=False)
     ans={}
-    ans['orderid']=odid
+    ans['orderId']=odid
     return json.dumps(ans)
+    # return json.dumps(True)
 @app.route('/readOrdersById', methods = ["POST"]) 
 def readordersbyid():
     data=request.json
@@ -342,24 +343,25 @@ def createmission():
     data=request.json
     #id=data['id']
     orderid=data['orderId']
-    dateOfMission=data["dateOfMission"]
-    timeOfDeparture=data["timeOfDeparture"]
-    timeOfDelivery=data["timeOfDelivery"]
-    timeOfArrival=data["timeOfArrival"]
-    distanceTravelled=data["distanceTravelled"]
+    # dateOfMission=data["dateOfMission"]
+    # timeOfDeparture=data["timeOfDeparture"]
+    # timeOfDelivery=data["timeOfDelivery"]
+    # timeOfArrival=data["timeOfArrival"]
+    # distanceTravelled=data["distanceTravelled"]
     From=data["from"]
     To=data["to"]
-    clientPhotograph=data["clientPhotograph"]
-    waypoints=data["waypoints"]
+    # clientPhotograph=data["clientPhotograph"]
+    # waypoints=data["waypoints"]
     try:
-        col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
-        "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
-        "distanceTravelled":distanceTravelled,"From":From,"To":To,
-        "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
+        # col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
+        # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
+        # "distanceTravelled":distanceTravelled,"From":From,"To":To,
+        # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
+        col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
-        return False
-    return True
+        return json.dumps(False)
+    return json.dumps(True)
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
     # id=bson.ObjectId(data['_id'])
@@ -660,3 +662,6 @@ def givelocation():
 
 if __name__ == '__main__':  
     app.run(host='0.0.0.0',port=80,debug = True)
+
+        
+   
