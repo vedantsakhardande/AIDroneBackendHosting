@@ -340,20 +340,21 @@ def createmission():
     data=request.json
     #id=data['id']
     orderid=data['orderId']
-    dateOfMission=data["dateOfMission"]
-    timeOfDeparture=data["timeOfDeparture"]
-    timeOfDelivery=data["timeOfDelivery"]
-    timeOfArrival=data["timeOfArrival"]
-    distanceTravelled=data["distanceTravelled"]
+    # dateOfMission=data["dateOfMission"]
+    # timeOfDeparture=data["timeOfDeparture"]
+    # timeOfDelivery=data["timeOfDelivery"]
+    # timeOfArrival=data["timeOfArrival"]
+    # distanceTravelled=data["distanceTravelled"]
     From=data["from"]
     To=data["to"]
-    clientPhotograph=data["clientPhotograph"]
-    waypoints=data["waypoints"]
+    # clientPhotograph=data["clientPhotograph"]
+    # waypoints=data["waypoints"]
     try:
-        col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
-        "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
-        "distanceTravelled":distanceTravelled,"From":From,"To":To,
-        "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
+        col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
+        # col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
+        # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
+        # "distanceTravelled":distanceTravelled,"From":From,"To":To,
+        # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
