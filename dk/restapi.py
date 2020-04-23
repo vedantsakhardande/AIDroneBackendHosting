@@ -267,9 +267,9 @@ def readordersbyid():
         print(document['AssignedDrones'])
 
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -300,9 +300,9 @@ def readallordersbyid(id):
         print("In here")
         print("Assigned Drones are :",document['AssignedDrones'])
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -330,7 +330,7 @@ def fetchorders():
     documents=col3.find()
     for document in documents:
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
