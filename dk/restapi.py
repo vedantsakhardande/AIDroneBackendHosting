@@ -324,7 +324,7 @@ def readallordersbyid(id):
         # print("Response is")
         # print(response)
     print("Hello From Orders")
-    print("Document is :",document)
+    # print("Document is :",document)
     print("Response is :",response)
     return json.dumps(response[0])
 
