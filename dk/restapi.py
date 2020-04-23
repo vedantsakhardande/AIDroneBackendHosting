@@ -288,6 +288,7 @@ def readallordersbyid(id):
     response = []
     myquery = { "_id": id }
     documents=col3.find(myquery)
+    answer=documents
     for document in documents:
         print("DOCUMENT")
         print(document)
@@ -305,6 +306,7 @@ def readallordersbyid(id):
             del x['droneid']
             print("D")
             for y in x['inventoryItems']:
+                print("Y is :",y)
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
                 del y['inventoryid']
@@ -319,13 +321,14 @@ def readallordersbyid(id):
             # newlist.append(x[0])
         # print(type(document['AssignedDrones']))
         # document['AssignedDrones']=newlist
+        print("Document is :",document)
         response.append(document)
         # print("Response is")
         # print(response)
     print("Hello From Orders")
     # print("Document is :",document)
     print("Response is :",response)
-    return json.dumps(response)
+    return response
 
 
 @app.route('/fetchorders', methods = ["GET"]) 
@@ -378,9 +381,19 @@ def createmission():
     wp=response.json()
     print("WP :",wp)
     waypoints=[]
+    temp={}
+    temp['lat']=src_lat
+    temp['lng']=src_lon
+    waypoints.append(temp)
     for i in range(0,len(wp)):
         waypoints.append(wp[i]["waypoint"])
     print("Waypoints are :",waypoints)
+    for i in range(0,len(waypoints)):
+        print("Lat :"+str(waypoints[i]['lat'])+"Lon :"+str(waypoints[i]['lng']))
+    temp={}
+    temp['lat']=dest_lat
+    temp['lng']=dest_lon
+    waypoints.append(temp)
     try:
         # col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
         # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
@@ -402,6 +415,7 @@ def readmissions():
     response = []
     # myquery = { "_id": id }
     documents=col4.find()
+    print("Hello")
     for document in documents:
         orderid=bson.ObjectId(document['orderid'])
         print("Hello")
