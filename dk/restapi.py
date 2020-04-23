@@ -297,7 +297,6 @@ def readallordersbyid(id):
         document['_id'] = str(document['_id'])
         document['AssignedDrones']=(document['AssignedDrones'])
 
-        # newlist=[]
         print("In here")
         print("Assigned Drones are :",document['AssignedDrones'])
         for x in document['AssignedDrones']:
