@@ -398,8 +398,10 @@ def readmissionbyid():
         document['order']=readallordersbyid(orderid)
         del document['orderid']
         document['_id'] = str(document['_id'])
-        # response.append(document)
-    return json.dumps(document) 
+        response.append(document)
+    print("Response",response)
+    return json.dumps(response)
+    # return json.dumps(document) 
 @app.route('/deleteMissionById', methods = ["DELETE"]) 
 def deletemissionbyid():
     data=request.json
