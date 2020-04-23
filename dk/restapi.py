@@ -202,7 +202,6 @@ def readinventoryitembyid():
     return json.dumps(documents)
 
 def readinventoryitemsbyid(id):
-    data=request.json
     id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
@@ -285,7 +284,6 @@ def readordersbyid():
     return json.dumps(document)    
 
 def readallordersbyid(id):
-    # data=request.json
     print("Hello i am here")
     id=bson.ObjectId(id)
     response = []
