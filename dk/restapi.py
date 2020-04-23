@@ -393,7 +393,6 @@ def readmissionbyid():
     myquery = { "_id": id }
     documents=col4.find(myquery)
     for document in documents:
-        print(type(document['orderid']))
         orderid=bson.ObjectId(document['orderid'])
         document['order']=readallordersbyid(orderid)
         del document['orderid']
