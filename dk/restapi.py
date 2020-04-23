@@ -298,6 +298,7 @@ def readallordersbyid(id):
         document['AssignedDrones']=(document['AssignedDrones'])
 
         # newlist=[]
+        print("In here")
         for x in document['AssignedDrones']:
             droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
@@ -312,7 +313,7 @@ def readallordersbyid(id):
                 del y['inventory']
                 del y['quantity']
                 # print(inventoryId)   
-            
+        print("Out here")
             # newlist.append(x[0])
         # print(type(document['AssignedDrones']))
         # document['AssignedDrones']=newlist
