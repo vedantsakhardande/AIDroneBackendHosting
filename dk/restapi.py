@@ -687,7 +687,6 @@ def checkQrCode():
         return json.dumps(False)
 
 
-
 # DRONE BASED APIS
 
 portno=5750
@@ -713,3 +712,6 @@ def givelocation():
 
 if __name__ == '__main__':  
     app.run(host='0.0.0.0',port=80,debug = True)
+
+
+
