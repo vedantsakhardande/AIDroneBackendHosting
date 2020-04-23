@@ -26,7 +26,7 @@ col4=db.mission
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
-col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+# col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
 # FOR USER APP
 db1=client.droneusers
