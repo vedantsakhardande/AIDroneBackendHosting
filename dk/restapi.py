@@ -285,7 +285,7 @@ def readordersbyid():
     return json.dumps(document)    
 
 def readallordersbyid(id):
-    data=request.json
+    # data=request.json
     print("Hello i am here")
     id=bson.ObjectId(id)
     response = []
