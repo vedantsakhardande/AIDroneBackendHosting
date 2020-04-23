@@ -371,7 +371,9 @@ def readmissions():
     documents=col4.find()
     for document in documents:
         orderid=bson.ObjectId(document['orderid'])
+        print("Hello")
         document['order']=readallordersbyid(orderid)
+        print("World")
         del document['orderid']
         document['_id'] = str(document['_id'])
         response.append(document)
