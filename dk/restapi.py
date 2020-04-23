@@ -152,7 +152,7 @@ def readdronebyid():
     return json.dumps(documents)
 
 def readdronesbyid(id):
-    data=request.json
+    # data=request.json
     id=bson.ObjectId(id)
     response = []
     myquery = { "_id": id }
