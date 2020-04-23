@@ -249,7 +249,7 @@ def addorder():
     timestamp+=")"
     odid=col3.insert({ "AssignedDrones": assigneddrones, "timestamp":timestamp},check_keys=False)
     ans={}
-    ans['orderId']=odid
+    ans['orderId']=str(odid)
     return json.dumps(ans)
     # return json.dumps(True)
 @app.route('/readOrdersById', methods = ["POST"]) 
@@ -267,9 +267,9 @@ def readordersbyid():
         print(document['AssignedDrones'])
 
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -299,9 +299,9 @@ def readallordersbyid(id):
 
         # newlist=[]
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -329,7 +329,7 @@ def fetchorders():
     documents=col3.find()
     for document in documents:
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
