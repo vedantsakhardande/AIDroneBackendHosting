@@ -299,6 +299,7 @@ def readallordersbyid(id):
 
         # newlist=[]
         print("In here")
+        print("Assigned Drones are :",document['AssignedDrones'])
         for x in document['AssignedDrones']:
             droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
