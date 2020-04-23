@@ -26,7 +26,7 @@ col4=db.mission
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
-col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+# col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 
 # FOR USER APP
 db1=client.droneusers
@@ -249,8 +249,9 @@ def addorder():
     timestamp+=")"
     odid=col3.insert({ "AssignedDrones": assigneddrones, "timestamp":timestamp},check_keys=False)
     ans={}
-    ans['orderid']=odid
+    ans['orderId']=str(odid)
     return json.dumps(ans)
+    # return json.dumps(True)
 @app.route('/readOrdersById', methods = ["POST"]) 
 def readordersbyid():
     data=request.json
@@ -266,9 +267,9 @@ def readordersbyid():
         print(document['AssignedDrones'])
 
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -284,7 +285,7 @@ def readordersbyid():
     return json.dumps(document)    
 
 def readallordersbyid(id):
-    data=request.json
+    # data=request.json
     print("Hello i am here")
     id=bson.ObjectId(id)
     response = []
@@ -297,10 +298,11 @@ def readallordersbyid(id):
         document['AssignedDrones']=(document['AssignedDrones'])
 
         # newlist=[]
+        print("In here")
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -311,7 +313,7 @@ def readallordersbyid(id):
                 del y['inventory']
                 del y['quantity']
                 # print(inventoryId)   
-            
+        print("Out here")
             # newlist.append(x[0])
         # print(type(document['AssignedDrones']))
         # document['AssignedDrones']=newlist
@@ -328,7 +330,7 @@ def fetchorders():
     documents=col3.find()
     for document in documents:
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
@@ -342,37 +344,41 @@ def createmission():
     data=request.json
     #id=data['id']
     orderid=data['orderId']
-    dateOfMission=data["dateOfMission"]
-    timeOfDeparture=data["timeOfDeparture"]
-    timeOfDelivery=data["timeOfDelivery"]
-    timeOfArrival=data["timeOfArrival"]
-    distanceTravelled=data["distanceTravelled"]
+    # dateOfMission=data["dateOfMission"]
+    # timeOfDeparture=data["timeOfDeparture"]
+    # timeOfDelivery=data["timeOfDelivery"]
+    # timeOfArrival=data["timeOfArrival"]
+    # distanceTravelled=data["distanceTravelled"]
     From=data["from"]
     To=data["to"]
-    clientPhotograph=data["clientPhotograph"]
-    waypoints=data["waypoints"]
+    # clientPhotograph=data["clientPhotograph"]
+    # waypoints=data["waypoints"]
     try:
-        col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
-        "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
-        "distanceTravelled":distanceTravelled,"From":From,"To":To,
-        "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
+        # col4.insert({"orderid": orderid, "dateOfMission":dateOfMission,
+        # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
+        # "distanceTravelled":distanceTravelled,"From":From,"To":To,
+        # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
+        col4.insert({"orderid": orderid,"from":From,"to":To},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
-        return False
-    return True
+        return json.dumps(False)
+    return json.dumps(True)
 @app.route('/readmissions', methods = ["GET"]) 
 def readmissions():
     # id=bson.ObjectId(data['_id'])
+    print("Read Missions")
     response = []
     # myquery = { "_id": id }
     documents=col4.find()
     for document in documents:
         orderid=bson.ObjectId(document['orderid'])
+        print("Hello")
         document['order']=readallordersbyid(orderid)
+        print("World")
         del document['orderid']
         document['_id'] = str(document['_id'])
         response.append(document)
-    print(response)
+    print("Response",response)
     return json.dumps(response)
 @app.route('/readMissionById', methods = ["POST"]) 
 def readmissionbyid():
@@ -660,3 +666,6 @@ def givelocation():
 
 if __name__ == '__main__':  
     app.run(host='0.0.0.0',port=80,debug = True)
+
+        
+   
