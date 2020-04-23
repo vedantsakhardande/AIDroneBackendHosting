@@ -300,9 +300,13 @@ def readallordersbyid(id):
         print("In here")
         print("Assigned Drones are :",document['AssignedDrones'])
         for x in document['AssignedDrones']:
+            print("A")
             droneId = x['droneid']
+            print("B")
             x['drone'] = readdronesbyid(droneId)
+            print("C")
             del x['droneid']
+            print("D")
             for y in x['inventoryItems']:
                 inventoryId = y['inventoryid']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
@@ -313,6 +317,7 @@ def readallordersbyid(id):
                 del y['inventory']
                 del y['quantity']
                 # print(inventoryId)   
+            print("E")
         print("Out here")
             # newlist.append(x[0])
         # print(type(document['AssignedDrones']))
