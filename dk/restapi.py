@@ -374,7 +374,7 @@ def readmissions():
         del document['orderid']
         document['_id'] = str(document['_id'])
         response.append(document)
-    print(response)
+    print("Response",response)
     return json.dumps(response)
 @app.route('/readMissionById', methods = ["POST"]) 
 def readmissionbyid():
