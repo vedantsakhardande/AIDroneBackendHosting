@@ -26,6 +26,7 @@ col1=db.drone
 col2=db.inventory
 col3=db.order
 col4=db.mission
+col5=db.userorders
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
@@ -638,14 +639,28 @@ def UserValidation():
     for i in range(0,len(response)):
         emailreg=response[i]["email"]
         passwordreg=response[i]["password"]
+        userid=response[i]['_id']
         if(password==passwordreg and email==emailreg):
             flag=1
             break
     if(flag==1):
-        return json.dumps(True)
+        return json.dumps(userid)
     else:
         return json.dumps(False)   
 
+
+@app.route('/placeOrder', methods = ["POST"]) 
+def placeOrder():
+    data=request.data
+    data = json.loads(data.decode('utf8'))
+    userid=str(data['userid'])
+    print(userid)
+    try:
+        col5.insert({"userid":userid},check_keys=False)
+    except pymongo.errors.DuplicateKeyError as e:
+        print(e)
+        return json.dumps(False)
+    return json.dumps(True)
 
 @app.route('/getQrCode', methods = ["POST"]) 
 def getQrCode():
