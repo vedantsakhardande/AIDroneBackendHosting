@@ -37,8 +37,14 @@ db1=client.droneusers
 usercol=db1.user
 
 
-app = Flask(__name__) 
+app = Flask(__name__)
 CORS(app)
+
+
+#WEB PAGE
+@app.route('/', methods = ["GET"]) 
+def getPage():
+    return "AI DRONE BACKEND"
 
 # STAKEHOLDER APP APIs
 
@@ -728,7 +734,7 @@ def givelocation():
 	return "Hello World"
 
 if __name__ == '__main__':  
-    app.run(host='0.0.0.0',port=80,debug = True)
+    app.run(host='0.0.0.0',port=80,debug = True,ssl_context='adhoc')
 
 
 
