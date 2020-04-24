@@ -654,9 +654,11 @@ def placeOrder():
     data=request.data
     data = json.loads(data.decode('utf8'))
     userid=str(data['userid'])
+    status=data['status']
+    timestamp=data['timestamp']
     print(userid)
     try:
-        col5.insert({"userid":userid},check_keys=False)
+        col5.insert({"userid":userid,"status":status,"timestamp":timestamp},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
