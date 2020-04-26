@@ -340,6 +340,12 @@ if __name__ == "__main__":
 			'Vy': vehicle.velocity[1],
 			'Vz': vehicle.velocity[2]
   			},
+		'speed':vel,
+		'clientdistance':clientdist,
+		'warehousedistance':warehousedist,
+		'vicinity':vicinity,
+		'clienttime':clienttime,
+		'warehousetime':warehousetime,
 		'gimbalStatus': {
 			'pitch': vehicle.gimbal.pitch,
 			'roll': vehicle.gimbal.roll,
@@ -361,8 +367,11 @@ if __name__ == "__main__":
 		'distance_to_next_waypoint': distance_to_current_waypoint()
 		}
 		rec = mydatabase.waypoints.insert(record)
-		sys.argv = [vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt, vel, clientdist, warehousedist, vicinity, clienttime, warehousetime ]
-		execfile('pushData.py')
+		#sys.argv = [vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt, vel, clientdist, warehousedist, vicinity, clienttime, warehousetime ]
+		#execfile('pushData.py')
+		r = requests.post(
+    	'https://aidrone-1250389064.ap-south-1.elb.amazonaws.com/pushCoordinates',
+    	data=record)
 		nextwaypoint = vehicle.commands.next
 		print('Distance to waypoint (%s): %s' % (nextwaypoint, distance_to_current_waypoint()))
 		print("Distance to Client is :",clientdist)

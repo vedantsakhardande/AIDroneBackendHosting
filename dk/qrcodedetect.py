@@ -90,7 +90,7 @@ def getandcheckqr():
   'qrscannumber': val
   }
   r = requests.post(
-    'http://35.154.138.70/setQrScanNumber',
+    'https://aidrone-1250389064.ap-south-1.elb.amazonaws.com/setQrScanNumber',
     data=params)
   cap.release()
   cv2.destroyAllWindows()

@@ -28,11 +28,12 @@ col2=db.inventory
 col3=db.order
 col4=db.mission
 col5=db.userorders
+col6=db.dronemissions
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
 col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
-
+col6.create_index([('userid', pymongo.ASCENDING)], unique=True)
 # context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 # context.use_privatekey_file('server.key')
 # context.use_certificate_file('server.crt')
@@ -722,7 +723,7 @@ portno=5750
 @app.route('/coordinates', methods=['POST'])
 def givelocation():
 	try:
-		_json = request.json
+		_json = request.data
 		src=_json['src']
 		des=_json['des']
 		src_lat = src['lat']
@@ -737,6 +738,57 @@ def givelocation():
 	except Exception as e:
 		print(e)
 	return "Hello World"
+
+@app.route('/pushCoordinates', methods=['POST'])
+def pushCoordinates():
+    try:
+        data=request.data
+        data = json.loads(data.decode('utf8'))
+        userid=data['userid']
+        missionid=data['missionid']
+        lat=data['latitude']
+        lon=data['longitude']
+        alt=data['altitude']
+        vel=data['velocity']
+        gimbalstatus=data['gimbalStatus']
+        battery=data['battery']
+        lastheartbeat=data['lastHeartBeat']
+        isarmable=data['isArmable']
+        sysstatus=data['systemStatus']
+        groundspeed=data['groundSpeed']
+        airSpeed=data['airSpeed']
+        mode=data['mode']
+        armed=data['armed']
+        nextwp=data['next_waypoint']
+        distancetonextwp=data['distance_to_next_waypoint']
+        timestamp=dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
+        timestamp=timestamp[:-5]
+        timestamp+=")"
+        col6.insert({"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
+        "velocity":vel,"gimbalstatus":gimbalstatus,"battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
+        "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
+        "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
+    except Exception as e:
+        print(e)
+    return "Hello World"
+@app.route('/readCoordinatesByUserId', methods = ["POST"]) 
+def readcoordinatesbyuserid():
+    data=request.json
+    userid=bson.ObjectId(data['userid'])
+    response = []
+    myquery = { "userid": userid }
+    documents=col6.find(myquery)
+    return json.dumps(documents)
+
+@app.route('/readCoordinatesByMissionId', methods = ["POST"]) 
+def readcoordinatesbymissionid():
+    data=request.json
+    missionid=bson.ObjectId(data['missionid'])
+    response = []
+    myquery = { "missionid": missionid }
+    documents=col6.find(myquery)
+    return json.dumps(documents)
+
 
 if __name__ == '__main__':  
     # app.run(host='0.0.0.0',port=443,debug = True,ssl_context=('cert.pem', 'key.pem'))
