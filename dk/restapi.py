@@ -17,6 +17,7 @@ import random
 from algo import assignDrones
 import start
 import ast
+# import ssl
 
 client = MongoClient('mongodb+srv://ai-drone:oOIUq8IGcTVKy7JV@cluster0-igbga.mongodb.net/test?retryWrites=true&w=majority',27017)
 # client=MongoClient('localhost',27017)
@@ -31,6 +32,10 @@ col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
 col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+
+# context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+# context.use_privatekey_file('server.key')
+# context.use_certificate_file('server.crt')
 
 # FOR USER APP
 db1=client.droneusers
@@ -734,6 +739,6 @@ def givelocation():
 	return "Hello World"
 
 if __name__ == '__main__':  
-    # app.run(host='0.0.0.0',port=80,debug = True,ssl_context=('cert.pem', 'key.pem'))
-    app.run(host='0.0.0.0',port=80,debug = True,ssl_context='adhoc')
-    # app.run(host='0.0.0.0',port=80,debug = True)
+    # app.run(host='127.0.0.1',port=5000,debug = True,ssl_context=('cert.pem', 'key.pem'))
+    # app.run(host='127.0.0.1',port=5000,debug = True,ssl_context=context)
+    app.run(host='0.0.0.0',port=80,debug = True)
