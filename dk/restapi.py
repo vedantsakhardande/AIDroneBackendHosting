@@ -795,8 +795,10 @@ def readcoordinatesbyuserid():
     response = []
     myquery = { "userid": userid }
     documents=col6.find(myquery)
-    print("Documents are :",documents)
-    return json.dumps(documents)
+    for document in documents:
+        document['userid'] = str(document['userid'])
+        response.append(document)
+    return json.dumps(response)
 
 @app.route('/readCoordinatesByMissionId', methods = ["POST"]) 
 def readcoordinatesbymissionid():
@@ -805,8 +807,10 @@ def readcoordinatesbymissionid():
     response = []
     myquery = { "missionid": missionid }
     documents=col6.find(myquery)
-    print("Documents are :",documents)
-    return json.dumps(documents)
+    for document in documents:
+        document['userid'] = str(document['userid'])
+        response.append(document)
+    return json.dumps(response)
 
 
 if __name__ == '__main__':  
