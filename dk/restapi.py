@@ -723,7 +723,7 @@ portno=5750
 @app.route('/coordinates', methods=['POST'])
 def givelocation():
     try:
-        _json = request.data
+        _json = request.json
         print("Data is :",_json)
         src=_json['src']
         des=_json['des']
