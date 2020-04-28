@@ -814,7 +814,6 @@ def readcoordinatesbyuserid():
     myquery = { "user_id": userid }
     documents=col6.find(myquery)
     for document in documents:
-        document['user_id'] = str(document['user_id'])
         response.append(document)
     return json.dumps(response)
 
@@ -826,7 +825,6 @@ def readcoordinatesbymissionid():
     myquery = { "mission_id": missionid }
     documents=col6.find(myquery)
     for document in documents:
-        document['user_id'] = str(document['user_id'])
         response.append(document)
     return json.dumps(response)
 
