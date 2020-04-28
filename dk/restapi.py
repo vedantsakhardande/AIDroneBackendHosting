@@ -784,6 +784,7 @@ def pushCoordinates():
         "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
         "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
         "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
+        return json.dumps(True)
     except Exception as e:
         print(e)
     return "Hello World"
@@ -794,6 +795,7 @@ def readcoordinatesbyuserid():
     response = []
     myquery = { "userid": userid }
     documents=col6.find(myquery)
+    print("Documents are :",documents)
     return json.dumps(documents)
 
 @app.route('/readCoordinatesByMissionId', methods = ["POST"]) 
@@ -803,6 +805,7 @@ def readcoordinatesbymissionid():
     response = []
     myquery = { "missionid": missionid }
     documents=col6.find(myquery)
+    print("Documents are :",documents)
     return json.dumps(documents)
 
 
