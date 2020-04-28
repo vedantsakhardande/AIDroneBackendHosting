@@ -781,10 +781,10 @@ def pushCoordinates():
         timestamp=timestamp[:-5]
         timestamp+=")"
         response=[]
-        myquery = { "userid": userid }
+        myquery = { "user_id": userid }
         documents=col6.find(myquery)
         for document in documents:
-            document['userid'] = str(document['userid'])
+            document['user_id'] = str(document['user_id'])
             response.append(document)
         if(len(response)==0):
             col6.insert({"user_id":userid,"mission_id":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
