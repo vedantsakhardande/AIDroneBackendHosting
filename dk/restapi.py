@@ -752,6 +752,7 @@ def pushCoordinates():
     try:
         data=request.data
         data = json.loads(data.decode('utf8'))
+        print("Data is :",data)
         userid=data['userid']
         missionid=data['missionid']
         lat=data['latitude']
