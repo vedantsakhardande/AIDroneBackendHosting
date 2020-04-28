@@ -750,7 +750,7 @@ def givelocation():
 @app.route('/pushCoordinates', methods=['POST'])
 def pushCoordinates():
     try:
-        print("Data is ",data)
+        # print("Data is ",data)
         userid=request.form['userid']
         missionid=request.form['missionid']
         lat=request.form['latitude']
