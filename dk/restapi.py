@@ -669,6 +669,7 @@ def placeOrder():
     data = json.loads(data.decode('utf8'))
     userid=str(data['user_id'])
     status=data['status']
+    order=data['order']
     timestamp=data['timestamp']
     print(userid)
     try:
