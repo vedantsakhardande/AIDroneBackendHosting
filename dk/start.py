@@ -18,6 +18,7 @@ def execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid):
     f.write(str(userid)+"\n")
     f.write(str(missionid))
     f.close()
+    print("Hello")
     if(portno==5760):
     	cmd="dronekit-sitl copter --home="+str(src_lat)+","+str(src_lon)+",0,180&"
     else:
