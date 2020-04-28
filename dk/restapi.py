@@ -32,7 +32,7 @@ col6=db.dronemissions
 col.create_index([('email', pymongo.ASCENDING)], unique=True)
 col1.create_index([('name', pymongo.ASCENDING)], unique=True)
 col2.create_index([('name', pymongo.ASCENDING)], unique=True)
-col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
+# col4.create_index([('orderid', pymongo.ASCENDING)], unique=True)
 # context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 # context.use_privatekey_file('server.key')
 # context.use_certificate_file('server.crt')
@@ -746,7 +746,7 @@ def givelocation():
         time.sleep(5)
         return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
     except Exception as e:
-		print(e)
+        print(e)
     return "Hello World"
 
 @app.route('/pushCoordinates', methods=['POST'])
@@ -837,4 +837,4 @@ def readcoordinatesbymissionid():
 if __name__ == '__main__':  
     # app.run(host='0.0.0.0',port=443,debug = True,ssl_context=('cert.pem', 'key.pem'))
     # app.run(host='127.0.0.1',port=5000,debug = True,ssl_context='adhoc')
-    app.run(host='0.0.0.0',port=80,debug = True)
+    app.run(host='127.0.0.1',port=5000,debug = True)
