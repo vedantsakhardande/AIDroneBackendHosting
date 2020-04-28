@@ -287,7 +287,8 @@ def readordersbyid():
                 qty=y['quantity']
                 y['inventory']['quantity']=qty
                 y['inventoryitem']=y['inventory']
-                del y['inventory']    
+                del y['inventory']
+                del y['quantity'] 
         response.append(document)
         print("Response is")
         print(response) 
