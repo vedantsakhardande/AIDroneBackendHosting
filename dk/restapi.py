@@ -277,13 +277,13 @@ def readordersbyid():
         print(document['AssignedDrones'])
 
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
-            del x['droneid']
+            del x['drone_id']
             for y in x['inventoryItems']:
-                inventoryId = y['inventoryid']
+                inventoryId = y['inventory_id']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
-                del y['inventoryid']
+                del y['inventory_id']
                 qty=y['quantity']
                 y['inventory']['quantity']=qty
                 y['inventoryitem']=y['inventory']
@@ -311,17 +311,17 @@ def readallordersbyid(id):
         print("Assigned Drones are :",document['AssignedDrones'])
         for x in document['AssignedDrones']:
             print("A")
-            droneId = x['droneid']
+            droneId = x['drone_id']
             print("B")
             x['drone'] = readdronesbyid(droneId)
             print("C")
-            del x['droneid']
+            del x['drone_id']
             print("D")
             for y in x['inventoryItems']:
                 print("Y is :",y)
-                inventoryId = y['inventoryid']
+                inventoryId = y['inventory_id']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
-                del y['inventoryid']
+                del y['inventory_id']
                 qty=y['quantity']
                 y['inventory']['quantity']=qty
                 y['inventoryitem']=y['inventory']
@@ -349,10 +349,10 @@ def fetchorders():
     documents=col3.find()
     for document in documents:
         for x in document['AssignedDrones']:
-            droneId = x['droneid']
+            droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
             for y in x['inventoryItems']:
-                inventoryId = y['inventoryid']
+                inventoryId = y['inventory_id']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
                 print(inventoryId)
         document['_id'] = str(document['_id'])
@@ -362,7 +362,7 @@ def fetchorders():
 def createmission():
     data=request.json
     #id=data['id']
-    orderid=data['orderId']
+    orderid=data['order_id']
     # dateOfMission=data["dateOfMission"]
     # timeOfDeparture=data["timeOfDeparture"]
     # timeOfDelivery=data["timeOfDelivery"]
@@ -411,7 +411,7 @@ def createmission():
         # "timeOfDeparture":timeOfDeparture,"timeOfDelivery":timeOfDelivery,"timeOfArrival":timeOfArrival,
         # "distanceTravelled":distanceTravelled,"From":From,"To":To,
         # "clientPhotograph":clientPhotograph,"waypoints":waypoints},check_keys=False)
-        mid=col4.insert({"orderid": orderid,"from":From,"to":To,"waypoints":waypoints},check_keys=False)
+        mid=col4.insert({"order_id": orderid,"from":From,"to":To,"waypoints":waypoints},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
@@ -429,11 +429,11 @@ def readmissions():
     documents=col4.find()
     print("Hello")
     for document in documents:
-        orderid=bson.ObjectId(document['orderid'])
+        orderid=bson.ObjectId(document['order_id'])
         print("Hello")
         document['order']=readallordersbyid(orderid)
         print("World")
-        del document['orderid']
+        del document['order_id']
         document['_id'] = str(document['_id'])
         response.append(document)
     print("Response",response)
@@ -446,9 +446,9 @@ def readmissionbyid():
     myquery = { "_id": id }
     documents=col4.find(myquery)
     for document in documents:
-        orderid=bson.ObjectId(document['orderid'])
+        orderid=bson.ObjectId(document['order_id'])
         document['order']=readallordersbyid(orderid)
-        del document['orderid']
+        del document['order_id']
         document['_id'] = str(document['_id'])
         response.append(document)
     print("Response",response)
@@ -664,12 +664,12 @@ def UserValidation():
 def placeOrder():
     data=request.data
     data = json.loads(data.decode('utf8'))
-    userid=str(data['userid'])
+    userid=str(data['user_id'])
     status=data['status']
     timestamp=data['timestamp']
     print(userid)
     try:
-        col5.insert({"userid":userid,"status":status,"timestamp":timestamp},check_keys=False)
+        col5.insert({"user_id":userid,"status":status,"timestamp":timestamp},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
@@ -732,13 +732,13 @@ def givelocation():
         des_lat = des['lat']
         des_lon = des['lon']
         print("Coordinates are :",src_lat,src_lon,des_lat,des_lon)
-        userid = _json['userid']
-        missionid = _json['missionid']
+        user_id = _json['user_id']
+        mission_id = _json['mission_id']
 
         global portno
         portno+=10
         print("Called Start")
-        start.execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid)
+        start.execute(src_lat,src_lon,des_lat,des_lon,portno,user_id,mission_id)
         print("Came from Start")
         time.sleep(5)
         return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
@@ -784,20 +784,20 @@ def pushCoordinates():
             document['userid'] = str(document['userid'])
             response.append(document)
         if(len(response)==0):
-            col6.insert({"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
-            "velocity":vel,"speed":speed,"clientdistance":clientdistance,"warehousedistance":warehousedistance,
-            "vicinity":vicinity,"clienttime":clienttime,"warehousetime":warehousetime,"gimbalstatus":gimbalstatus,
-            "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
-            "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
-            "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
+            col6.insert({"user_id":userid,"mission_id":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
+            "velocity":vel,"speed":speed,"client_distance":clientdistance,"warehouse_distance":warehousedistance,
+            "vicinity":vicinity,"client_time":clienttime,"warehouse_time":warehousetime,"gimbal_status":gimbalstatus,
+            "battery":battery,"last_heart_beat":lastheartbeat,"is_armable":isarmable,
+            "system_status":sysstatus,"ground_speed":groundspeed,"air_speed":airSpeed,"mode":mode,"armed":armed,
+            "next_waypoint":nextwp,"distance_to_next_waypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
         else:
-            myquery = { "userid": userid }
-            newvalues = { "$set": {"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
-            "velocity":vel,"speed":speed,"clientdistance":clientdistance,"warehousedistance":warehousedistance,
-            "vicinity":vicinity,"clienttime":clienttime,"warehousetime":warehousetime,"gimbalstatus":gimbalstatus,
-            "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
-            "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
-            "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp} }
+            myquery = { "user_id": userid }
+            newvalues = { "$set": {"user_id":userid,"mission_id":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
+            "velocity":vel,"speed":speed,"client_distance":clientdistance,"warehouse_distance":warehousedistance,
+            "vicinity":vicinity,"client_time":clienttime,"warehouse_time":warehousetime,"gimbal_status":gimbalstatus,
+            "battery":battery,"last_heart_beat":lastheartbeat,"is_armable":isarmable,
+            "system_status":sysstatus,"ground_speed":groundspeed,"air_speed":airSpeed,"mode":mode,"armed":armed,
+            "next_waypoint":nextwp,"distance_to_next_waypoint":distancetonextwp,"timestamp":timestamp} }
             col6.update_one(myquery, newvalues)
         return json.dumps(True)
     except Exception as e:
@@ -806,24 +806,24 @@ def pushCoordinates():
 @app.route('/readCoordinatesByUserId', methods = ["POST"]) 
 def readcoordinatesbyuserid():
     data=request.json
-    userid=bson.ObjectId(data['userid'])
+    userid=bson.ObjectId(data['user_id'])
     response = []
-    myquery = { "userid": userid }
+    myquery = { "user_id": userid }
     documents=col6.find(myquery)
     for document in documents:
-        document['userid'] = str(document['userid'])
+        document['user_id'] = str(document['user_id'])
         response.append(document)
     return json.dumps(response)
 
 @app.route('/readCoordinatesByMissionId', methods = ["POST"]) 
 def readcoordinatesbymissionid():
     data=request.json
-    missionid=bson.ObjectId(data['missionid'])
+    missionid=bson.ObjectId(data['mission_id'])
     response = []
-    myquery = { "missionid": missionid }
+    myquery = { "mission_id": missionid }
     documents=col6.find(myquery)
     for document in documents:
-        document['userid'] = str(document['userid'])
+        document['user_id'] = str(document['user_id'])
         response.append(document)
     return json.dumps(response)
 
