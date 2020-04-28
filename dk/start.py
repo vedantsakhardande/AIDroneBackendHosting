@@ -3,7 +3,7 @@ import subprocess
 import time
 
 # from dronekit_sitl.__init__ import main
-def execute(src_lat,src_lon,des_lat,des_lon,portno):
+def execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid):
     #os.system('fuser -k 5760/tcp')
     #os.system('fuser -k 5760/tcp')
     killport='fuser -k '+str(portno)+'/tcp'
@@ -14,7 +14,9 @@ def execute(src_lat,src_lon,des_lat,des_lon,portno):
 # sys.exit(main())
     f=open("passcoord.txt","w")
     f.write(str(des_lat)+"\n")
-    f.write(str(des_lon))
+    f.write(str(des_lon)+"\n")
+    f.write(str(userid)+"\n")
+    f.write(str(missionid))
     f.close()
     if(portno==5760):
     	cmd="dronekit-sitl copter --home="+str(src_lat)+","+str(src_lon)+",0,180&"

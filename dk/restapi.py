@@ -722,22 +722,24 @@ portno=5750
 #COORDINATE API
 @app.route('/coordinates', methods=['POST'])
 def givelocation():
-	try:
-		_json = request.data
-		src=_json['src']
-		des=_json['des']
-		src_lat = src['lat']
-		src_lon = src['lon']
-		des_lat = des['lat']
-		des_lon = des['lon']
-		global portno
-		portno+=10
-		start.execute(src_lat,src_lon,des_lat,des_lon,portno)
-		time.sleep(5)
-		return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
-	except Exception as e:
+    try:
+        _json = request.data
+        src=_json['src']
+        des=_json['des']
+        src_lat = src['lat']
+        src_lon = src['lon']
+        des_lat = des['lat']
+        des_lon = des['lon']
+        userid = _json['userid']
+        missionid = _json['missionid']
+        global portno
+        portno+=10
+        start.execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid)
+        time.sleep(5)
+        return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
+    except Exception as e:
 		print(e)
-	return "Hello World"
+    return "Hello World"
 
 @app.route('/pushCoordinates', methods=['POST'])
 def pushCoordinates():
@@ -750,6 +752,12 @@ def pushCoordinates():
         lon=data['longitude']
         alt=data['altitude']
         vel=data['velocity']
+        speed=data['speed']
+        clientdistance=data['clientdistance']
+        warehousedistance=data['warehousedistance']
+        vicinity=data['vicinity']
+        clienttime=data['clienttime']
+        warehousetime=data['warehousetime']
         gimbalstatus=data['gimbalStatus']
         battery=data['battery']
         lastheartbeat=data['lastHeartBeat']
@@ -765,7 +773,9 @@ def pushCoordinates():
         timestamp=timestamp[:-5]
         timestamp+=")"
         col6.insert({"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
-        "velocity":vel,"gimbalstatus":gimbalstatus,"battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
+        "velocity":vel,"speed":speed,"clientdistance":clientdistance,"warehousedistance":warehousedistance,
+        "vicinity":vicinity,"clienttime":clienttime,"warehousetime":warehousetime,"gimbalstatus":gimbalstatus,
+        "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
         "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
         "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
     except Exception as e:

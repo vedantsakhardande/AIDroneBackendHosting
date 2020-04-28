@@ -178,8 +178,12 @@ if __name__ == "__main__":
 	with open("passcoord.txt","r") as f:
 		data=f.readlines()
 	temp=data[0].split("\n")
+	temp1=data[1].split("\n")
+	temp2=data[2].split("\n")
 	des_lat=float(temp[0])
-	des_lon=float(data[1])
+	des_lon=float(temp1[0])
+	userid=str(temp2[0])
+	missionid=str(data[3])
 	src_lat=wphome.lat
 	src_lon=wphome.lon
 	params = {
@@ -332,6 +336,8 @@ if __name__ == "__main__":
 		clienttime=clientdist/vel
 		warehousetime=warehousedist/vel
 		record={ 
+		'userid':userid,
+		'missionid':missionid,
 		'latitude': vehicle.location.global_relative_frame.lat,
 		'longitude': vehicle.location.global_relative_frame.lon,
 		'altitude': vehicle.location.global_relative_frame.alt,
