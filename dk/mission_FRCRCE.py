@@ -376,7 +376,7 @@ if __name__ == "__main__":
 		#sys.argv = [vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt, vel, clientdist, warehousedist, vicinity, clienttime, warehousetime ]
 		#execfile('pushData.py')
 		r = requests.post(
-    	'https://aidrone-1250389064.ap-south-1.elb.amazonaws.com/pushCoordinates',
+    	'http://35.154.138.70/pushCoordinates',
     	data=record)
 		nextwaypoint = vehicle.commands.next
 		print('Distance to waypoint (%s): %s' % (nextwaypoint, distance_to_current_waypoint()))
