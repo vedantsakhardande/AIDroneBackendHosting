@@ -22,16 +22,20 @@ def execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid):
     if(portno==5760):
     	cmd="dronekit-sitl copter --home="+str(src_lat)+","+str(src_lon)+",0,180&"
     else:
+	    print("DroneSitl Started")
 	    instanceno=(portno-5760)//10
 	    cmd="dronekit-sitl copter --instance "+str(instanceno)+" --home="+str(src_lat)+","+str(src_lon)+",0,180&"
     os.system(cmd)
     time.sleep(2)
     screenstr="screen -dm mavproxy.py --master=tcp:127.0.0.1:"+str(portno)+" --out=127.0.0.1:14550 --out=127.0.0.1:"+str(portno+5)
     # print str(screenstr)
+    print("Mavproxy Started")
     os.system(screenstr)
     #os.system('screen -dm mavproxy.py --master=tcp:127.0.0.1:5760 --out=127.0.0.1:14550 --out=127.0.0.1:5762')
     time.sleep(2)
+    print("Before Mission FRCRCE")
     missionstr="python mission_FRCRCE.py --connect 127.0.0.1:"+str(portno+5)
+    print("After Mission FRCRCE")
     #os.system('python mission_FRCRCE.py --connect 127.0.0.1:5762')
     # print str(missionstr)
     os.system(missionstr)
