@@ -351,10 +351,12 @@ def fetchorders():
         for x in document['AssignedDrones']:
             droneId = x['drone_id']
             x['drone'] = readdronesbyid(droneId)
+            del x['drone_id']
             for y in x['inventoryItems']:
                 inventoryId = y['inventory_id']
                 y['inventory'] = readinventoryitemsbyid(inventoryId)
                 print(inventoryId)
+                del y['inventory_id']
         document['_id'] = str(document['_id'])
         response.append(document)
     return json.dumps(response)
