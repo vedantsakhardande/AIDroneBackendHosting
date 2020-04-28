@@ -175,8 +175,10 @@ if __name__ == "__main__":
 	cmd1=None
 	cmd2=None
 	cmd3=None
+	print("Beginning of Mission FRCRCE")
 	with open("passcoord.txt","r") as f:
 		data=f.readlines()
+	print("HIiiiiiiiiiiiiii")
 	temp=data[0].split("\n")
 	temp1=data[1].split("\n")
 	temp2=data[2].split("\n")
@@ -184,6 +186,7 @@ if __name__ == "__main__":
 	des_lon=float(temp1[0])
 	userid=str(temp2[0])
 	missionid=str(data[3])
+	print("Data read")
 	src_lat=wphome.lat
 	src_lon=wphome.lon
 	params = {
