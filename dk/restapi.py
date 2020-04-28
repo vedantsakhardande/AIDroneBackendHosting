@@ -724,6 +724,7 @@ portno=5750
 def givelocation():
     try:
         _json = request.data
+        print("Data is :",_json)
         src=_json['src']
         des=_json['des']
         src_lat = src['lat']
