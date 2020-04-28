@@ -810,11 +810,13 @@ def pushCoordinates():
 def readcoordinatesbyuserid():
     data=request.json
     userid=bson.ObjectId(data['user_id'])
+    print("User Id is :",userid)
     response = []
     myquery = { "user_id": userid }
     documents=col6.find(myquery)
     for document in documents:
         response.append(document)
+    print("Response is :",response)
     return json.dumps(response)
 
 @app.route('/readCoordinatesByMissionId', methods = ["POST"]) 
