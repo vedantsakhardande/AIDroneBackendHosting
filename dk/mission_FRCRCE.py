@@ -376,8 +376,8 @@ if __name__ == "__main__":
 		'distance_to_next_waypoint': distance_to_current_waypoint()
 		}
 		rec = mydatabase.waypoints.insert(record)
-		#sys.argv = [vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt, vel, clientdist, warehousedist, vicinity, clienttime, warehousetime ]
-		#execfile('pushData.py')
+		sys.argv = [vehicle.location.global_relative_frame.lat, vehicle.location.global_relative_frame.lon, vehicle.location.global_relative_frame.alt, vel, clientdist, warehousedist, vicinity, clienttime, warehousetime ]
+		execfile('pushData.py')
 		r = requests.post(
     	'http://35.154.138.70/pushCoordinates',
     	data=record)
