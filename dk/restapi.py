@@ -777,12 +777,28 @@ def pushCoordinates():
         timestamp=dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
         timestamp=timestamp[:-5]
         timestamp+=")"
-        col6.insert({"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
-        "velocity":vel,"speed":speed,"clientdistance":clientdistance,"warehousedistance":warehousedistance,
-        "vicinity":vicinity,"clienttime":clienttime,"warehousetime":warehousetime,"gimbalstatus":gimbalstatus,
-        "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
-        "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
-        "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
+        response=[]
+        myquery = { "userid": userid }
+        documents=col6.find(myquery)
+        for document in documents:
+            document['userid'] = str(document['userid'])
+            response.append(document)
+        if(len(response)==0):
+            col6.insert({"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
+            "velocity":vel,"speed":speed,"clientdistance":clientdistance,"warehousedistance":warehousedistance,
+            "vicinity":vicinity,"clienttime":clienttime,"warehousetime":warehousetime,"gimbalstatus":gimbalstatus,
+            "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
+            "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
+            "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp},check_keys=False)
+        else:
+            myquery = { "userid": userid }
+            newvalues = { "$set": {"userid":userid,"missionid":missionid,"latitude":lat,"longitude":lon,"altitude":alt,
+            "velocity":vel,"speed":speed,"clientdistance":clientdistance,"warehousedistance":warehousedistance,
+            "vicinity":vicinity,"clienttime":clienttime,"warehousetime":warehousetime,"gimbalstatus":gimbalstatus,
+            "battery":battery,"lastheartbeat":lastheartbeat,"isarmable":isarmable,
+            "systemstatus":sysstatus,"groundspeed":groundspeed,"airspeed":airSpeed,"mode":mode,"armed":armed,
+            "nextwaypoint":nextwp,"distancetonextwaypoint":distancetonextwp,"timestamp":timestamp} }
+            col6.update_one(myquery, newvalues)
         return json.dumps(True)
     except Exception as e:
         print(e)
