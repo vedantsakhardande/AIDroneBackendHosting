@@ -774,6 +774,7 @@ def pushCoordinates():
         armed=request.form['armed']
         nextwp=request.form['next_waypoint']
         distancetonextwp=request.form['distance_to_next_waypoint']
+        dateTimeObj = datetime.now()
         timestamp=dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
         timestamp=timestamp[:-5]
         timestamp+=")"
