@@ -734,7 +734,9 @@ def givelocation():
         missionid = _json['missionid']
         global portno
         portno+=10
+        print("Called Start")
         start.execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid)
+        print("Came from Start")
         time.sleep(5)
         return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
     except Exception as e:
