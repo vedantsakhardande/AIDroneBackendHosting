@@ -727,12 +727,15 @@ def givelocation():
         print("Data is :",_json)
         src=_json['src']
         des=_json['des']
+        print("SRC is :"+str(src)+"DES is"+str(des))
         src_lat = src['lat']
         src_lon = src['lon']
         des_lat = des['lat']
         des_lon = des['lon']
+        print("Coordinates are :",src_lat,src_lon,des_lat,des_lon)
         userid = _json['userid']
         missionid = _json['missionid']
+
         global portno
         portno+=10
         print("Called Start")
