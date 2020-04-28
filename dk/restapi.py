@@ -741,7 +741,7 @@ def givelocation():
         print("Called Start")
         start.execute(src_lat,src_lon,des_lat,des_lon,portno,userid,missionid)
         print("Came from Start")
-        # time.sleep(5)
+        time.sleep(5)
         return "SRC Latitude is :"+str(src_lat)+"SRC Longitude is :"+str(src_lon)+"DES Latitude is :"+str(des_lat)+"DEST Longitude is :"+str(des_lon)
     except Exception as e:
 		print(e)
@@ -753,29 +753,31 @@ def pushCoordinates():
         # data=request.data
         # data = json.loads(data.decode('utf8'))
         # print("Data is :",data)
-        userid=request.form['userid']
-        missionid=request.form['missionid']
-        lat=request.form['latitude']
-        lon=request.form['longitude']
-        alt=request.form['altitude']
-        vel=request.form['velocity']
-        speed=request.form['speed']
-        clientdistance=request.form['clientdistance']
-        warehousedistance=request.form['warehousedistance']
-        vicinity=request.form['vicinity']
-        clienttime=request.form['clienttime']
-        warehousetime=request.form['warehousetime']
-        gimbalstatus=request.form['gimbalStatus']
-        battery=request.form['battery']
-        lastheartbeat=request.form['lastHeartBeat']
-        isarmable=request.form['isArmable']
-        sysstatus=request.form['systemStatus']
-        groundspeed=request.form['groundSpeed']
-        airSpeed=request.form['airSpeed']
-        mode=request.form['mode']
-        armed=request.form['armed']
-        nextwp=request.form['next_waypoint']
-        distancetonextwp=request.form['distance_to_next_waypoint']
+        data=request.form
+        print("Data is ",data)
+        userid=data['userid']
+        missionid=data['missionid']
+        lat=data['latitude']
+        lon=data['longitude']
+        alt=data['altitude']
+        vel=data['velocity']
+        speed=data['speed']
+        clientdistance=data['clientdistance']
+        warehousedistance=data['warehousedistance']
+        vicinity=data['vicinity']
+        clienttime=data['clienttime']
+        warehousetime=data['warehousetime']
+        gimbalstatus=data['gimbalStatus']
+        battery=data['battery']
+        lastheartbeat=data['lastHeartBeat']
+        isarmable=data['isArmable']
+        sysstatus=data['systemStatus']
+        groundspeed=data['groundSpeed']
+        airSpeed=data['airSpeed']
+        mode=data['mode']
+        armed=data['armed']
+        nextwp=data['next_waypoint']
+        distancetonextwp=data['distance_to_next_waypoint']
         timestamp=dateTimeObj.strftime("%d-%b-%Y (%H:%M:%S.%f)")
         timestamp=timestamp[:-5]
         timestamp+=")"
