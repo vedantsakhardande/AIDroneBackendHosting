@@ -673,7 +673,7 @@ def placeOrder():
     timestamp=data['timestamp']
     print(userid)
     try:
-        col5.insert({"user_id":userid,"status":status,"timestamp":timestamp},check_keys=False)
+        col5.insert({"user_id":userid,"status":status,"timestamp":timestamp,"order":order},check_keys=False)
     except pymongo.errors.DuplicateKeyError as e:
         print(e)
         return json.dumps(False)
